@@ -3,7 +3,7 @@ import { Logger } from '@utils/logger.util';
 import { NextFunction, Request } from 'express';
 
 export const globalMiddleware = (request: Request, response: Response, next: NextFunction) => {
-  const authKey = request.headers?.keys;
+  const authKey = request.headers?.key;
   const serverAuthKey = process.env.AUTH_KEY;
 
   Logger.debug('Request Info Received: %o', {

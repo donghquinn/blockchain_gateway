@@ -5,10 +5,12 @@ export const cryptPassword = (password: string) => {
   const iv = randomBytes(16); // Initialization vector
   const cipher = createCipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
 
-  let encrypted = cipher.update(password, 'utf-8', 'hex');
-  encrypted += cipher.final('hex');
+  const encrypted = cipher.update(password);
 
-  return { passwordToken: iv.toString('hex'), encodedPassword: encrypted };
+  const encryptedString = Buffer.concat( [ encrypted, cipher.final() ] ).toString( "hex" )
+  
+
+  return { passwordToken: iv.toString('hex'), encodedPassword: encryptedString };
 };
 
 export const cryptPrivateKey = (privateKey: string) => {
@@ -16,8 +18,9 @@ export const cryptPrivateKey = (privateKey: string) => {
   const iv = randomBytes(16); // Initialization vector
   const cipher = createCipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
 
-  let encrypted = cipher.update(privateKey, 'utf-8', 'hex');
-  encrypted += cipher.final('hex');
+  const encrypted = cipher.update(privateKey);
 
-  return { pkToken: iv.toString('hex'), encodedPrivateKey: encrypted };
+  const encryptedString = Buffer.concat( [ encrypted, cipher.final() ] ).toString( "hex" )
+  
+  return { pkToken: iv.toString('hex'), encodedPrivateKey: encryptedString };
 };
