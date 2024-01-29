@@ -9,3 +9,27 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Account {
+  uuid String @id @default(uuid())
+  address String @unique
+  password String
+  privateKey String
+  pkToken String
+  passwordToken String
+  balance Float @default(0)
+  nonce Int @default(0)
+  created DateTime @default(now())
+  updated DateTime @updatedAt()
+}
+
+model Transaction {
+  uuid String @id @default(uuid())
+  from String
+  to String
+  spent Float
+  gas Float
+  nonce String
+  created DateTime @default(now())
+  updated DateTime @updatedAt()
+}
