@@ -9,3 +9,54 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+// model Wallet {
+//   uuid String @id @default(uuid())
+//   email String
+//   clientUuid String
+//   client Client @relation(fields: [clientUuid], references: [uuid])
+//   account Account[]
+//     created DateTime @default(now())
+//   updated DateTime @updatedAt()
+// }
+
+model Client {
+  uuid String @id @default(uuid())
+  email String
+  password String
+  passwordToken String
+  account Account[]
+  created DateTime @default(now())
+  updated DateTime @updatedAt()
+}
+
+
+
+model Account {
+  uuid String @id @default(uuid())
+  address String @unique
+  privateKey String
+  pkToken String
+  balance BigInt @default(0)
+  nonce BigInt @default(0)
+  created DateTime @default(now())
+  updated DateTime @updatedAt()
+  clientUuid String
+  client Client @relation(fields: [clientUuid], references: [uuid])
+  transaction Transaction[]
+}
+
+model Transaction {
+  uuid String @id @default(uuid())
+  from String
+  to String
+  value BigInt
+  gas BigInt
+  gasPrice BigInt?
+  nonce BigInt?
+  blockNumber String?
+  txHash String?
+  status String
+  created DateTime @default(now())
+  updated DateTime @updatedAt()
+  account Account @relation(fields: [from], references: [address])
+}
