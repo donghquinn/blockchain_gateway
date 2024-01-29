@@ -1,0 +1,47 @@
+---
+version: '3.7'
+services:
+  backend:
+    image: ${REGISTRY_URL}
+    # build:
+    #   context: .
+    #   dockerfile: ./Dockerfile-deploy
+    container_name: gateway
+    restart: unless-stopped
+    volumes:
+      - ./logs:/home/node/logs
+      - /etc/localtime:/etc/localtime
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 700M
+        reservations:
+          cpus: '0.15'
+          memory: 300M
+    expose:
+      - ${APP_PORT}
+    env_file:
+      - .env
+    networks:
+      - proxy
+
+  db:
+    image: postgres:15-alpine3.17
+    ports:
+      - 6432:5432
+    restart: always
+    container_name: blockdb
+    environment:
+      - TZ=Asia/Seoul
+    env_file:
+      - .postgres.env
+    volumes:
+      - blockdata:/var/lib/postgresql/data
+    networks:
+      - proxy
+networks:
+  proxy:
+    external: true
+volumes:
+  blockdata:
