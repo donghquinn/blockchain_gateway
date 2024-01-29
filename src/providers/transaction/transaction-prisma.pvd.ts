@@ -32,9 +32,14 @@ export class TransactionPrismaLibrary extends PrismaClient {
 
       return { privateKey, pkToken, balance, nonce };
     } catch (error) {
+      PrismaLogger.error('[PK_ACCOUNT] Query Private Key and Account Data Error: %o', {
+        error,
+      });
+
       throw new PrismaError(
         '[PK_ACCOUNT]  Query Private Key and Account Data',
         ' Query Private Key and Account Data Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }
   }
