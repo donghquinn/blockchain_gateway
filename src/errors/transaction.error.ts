@@ -4,7 +4,7 @@ export class TransactionError extends Error {
   constructor(type: string, message: string, cause?: Error) {
     super(message);
 
-    this.name = "[Transaction Error]";
+    this.name = '[Transaction Error]';
     this.type = type;
     this.cause = cause;
   }

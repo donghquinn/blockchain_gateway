@@ -29,8 +29,6 @@ model Client {
   updated DateTime @updatedAt()
 }
 
-
-
 model Account {
   uuid String @id @default(uuid())
   address String @unique

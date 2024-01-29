@@ -4,7 +4,7 @@ export class ValidatorError extends Error {
   constructor(type: string, message: string, cause?: Error) {
     super(message);
 
-    this.name = "[Validator Error]";
+    this.name = '[Validator Error]';
     this.type = type;
     this.cause = cause;
   }

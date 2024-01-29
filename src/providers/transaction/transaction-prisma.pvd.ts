@@ -1,8 +1,8 @@
-import { PrismaError } from "@errors/prisma.error";
-import { Injectable } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
-import { PrismaLogger, TransactionLogger } from "@utils/logger.util";
-import { TransactionError } from "web3";
+import { PrismaError } from '@errors/prisma.error';
+import { Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { PrismaLogger, TransactionLogger } from '@utils/logger.util';
+import { TransactionError } from 'web3';
 
 @Injectable()
 export class TransactionPrismaLibrary extends PrismaClient {
@@ -21,21 +21,15 @@ export class TransactionPrismaLibrary extends PrismaClient {
       });
 
       if (result === null) {
-        PrismaLogger.error("[PK] Query Result is Null: %o", { from });
+        PrismaLogger.error('[PK] Query Result is Null: %o', { from });
 
-        throw new TransactionError(
-          "[PK] Query Private Key",
-          "Query Private Key is empty. Please Try Again.",
-        );
+        throw new TransactionError('[PK] Query Private Key', 'Query Private Key is empty. Please Try Again.');
       }
       const { privateKey, pkToken, balance, nonce } = result;
 
       return { privateKey, pkToken, balance, nonce };
     } catch (error) {
-      throw new PrismaError(
-        "[PK] Get Private Key",
-        "Get Private Key Error. Please Try Again.",
-      );
+      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
     }
   }
 
@@ -51,34 +45,26 @@ export class TransactionPrismaLibrary extends PrismaClient {
       });
 
       if (result === null) {
-        PrismaLogger.error("[NONCE] Get Nonce is Null");
+        PrismaLogger.error('[NONCE] Get Nonce is Null');
 
-        throw new TransactionError(
-          "[NONCE] Get Nonce",
-          "Get Nonce Error. Please Try again.",
-        );
+        throw new TransactionError('[NONCE] Get Nonce', 'Get Nonce Error. Please Try again.');
       }
 
       return result.nonce;
     } catch (error) {
-      PrismaLogger.error("[ACCOUNT] Insert New Client Error: %o", {
+      PrismaLogger.error('[ACCOUNT] Insert New Client Error: %o', {
         error,
       });
 
       throw new PrismaError(
-        "[ACCOUNT] Insert New Client Info",
-        "Insert New Client Info Error. Please Try Again.",
+        '[ACCOUNT] Insert New Client Info',
+        'Insert New Client Info Error. Please Try Again.',
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }
   }
 
-  async insertNewTransaction(
-    from: string,
-    to: string,
-    value: bigint,
-    gas: bigint,
-  ): Promise<string> {
+  async insertNewTransaction(from: string, to: string, value: bigint, gas: bigint): Promise<string> {
     try {
       const { uuid } = await this.transaction.create({
         data: {
@@ -86,30 +72,23 @@ export class TransactionPrismaLibrary extends PrismaClient {
           to,
           value,
           gas,
-          status: "created",
+          status: 'created',
         },
       });
 
       return uuid;
     } catch (error) {
-      throw new PrismaError(
-        "[PK] Get Private Key",
-        "Get Private Key Error. Please Try Again.",
-      );
+      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
     }
   }
 
-  async updateTransactionGasPrice(
-    from: string,
-    txUuid: string,
-    gasPrice: bigint,
-  ): Promise<void> {
+  async updateTransactionGasPrice(from: string, txUuid: string, gasPrice: bigint): Promise<void> {
     try {
       await this.transaction.update({
         data: {
           from,
           gasPrice,
-          status: "GasPrice Updated",
+          status: 'GasPrice Updated',
         },
         where: {
           from,
@@ -117,24 +96,17 @@ export class TransactionPrismaLibrary extends PrismaClient {
         },
       });
     } catch (error) {
-      throw new PrismaError(
-        "[PK] Get Private Key",
-        "Get Private Key Error. Please Try Again.",
-      );
+      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
     }
   }
 
-  async updateTransactionNonce(
-    from: string,
-    txUuid: string,
-    nonce: bigint,
-  ): Promise<void> {
+  async updateTransactionNonce(from: string, txUuid: string, nonce: bigint): Promise<void> {
     try {
       await this.transaction.update({
         data: {
           from,
           nonce,
-          status: "Nonce Updated",
+          status: 'Nonce Updated',
         },
         where: {
           from,
@@ -142,10 +114,7 @@ export class TransactionPrismaLibrary extends PrismaClient {
         },
       });
     } catch (error) {
-      throw new PrismaError(
-        "[PK] Get Private Key",
-        "Get Private Key Error. Please Try Again.",
-      );
+      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
     }
   }
 
@@ -160,7 +129,7 @@ export class TransactionPrismaLibrary extends PrismaClient {
       await this.transaction.update({
         data: {
           txHash,
-          status: "Success",
+          status: 'Success',
         },
         where: {
           from,
@@ -170,7 +139,7 @@ export class TransactionPrismaLibrary extends PrismaClient {
 
       const addedNonce = nonce + 1n;
 
-      TransactionLogger.info("Nonce Add: %o", {
+      TransactionLogger.info('Nonce Add: %o', {
         nonce,
         addedNonce,
       });
@@ -185,10 +154,7 @@ export class TransactionPrismaLibrary extends PrismaClient {
         },
       });
     } catch (error) {
-      throw new PrismaError(
-        "[PK] Get Private Key",
-        "Get Private Key Error. Please Try Again.",
-      );
+      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
     }
   }
 }

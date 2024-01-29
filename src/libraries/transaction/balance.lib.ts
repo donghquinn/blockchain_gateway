@@ -1,5 +1,4 @@
-export const subtractBalance = (balance: bigint, value: bigint) =>
-  balance - value;
+export const subtractBalance = (balance: bigint, value: bigint) => balance - value;
 
 export const compareBalance = (networkBalance: bigint, dbBalance: bigint) =>
   networkBalance === dbBalance ? true : false;

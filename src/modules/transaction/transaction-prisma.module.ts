@@ -1,5 +1,5 @@
-import { Module } from "@nestjs/common";
-import { TransactionPrismaLibrary } from "providers/transaction/transaction-prisma.pvd";
+import { Module } from '@nestjs/common';
+import { TransactionPrismaLibrary } from 'providers/transaction/transaction-prisma.pvd';
 
 @Module({
   providers: [TransactionPrismaLibrary],
