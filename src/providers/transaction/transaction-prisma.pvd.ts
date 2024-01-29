@@ -6,12 +6,14 @@ import { TransactionError } from "web3";
 
 @Injectable()
 export class TransactionPrismaLibrary extends PrismaClient {
-  async getPk(from: string) {
+  async getPkandAccountData(from: string) {
     try {
       const result = await this.account.findFirst({
         select: {
           privateKey: true,
           pkToken: true,
+          balance: true,
+          nonce: true,
         },
         where: {
           address: from,
@@ -26,9 +28,9 @@ export class TransactionPrismaLibrary extends PrismaClient {
           "Query Private Key is empty. Please Try Again.",
         );
       }
-      const { privateKey, pkToken } = result;
+      const { privateKey, pkToken, balance, nonce } = result;
 
-      return { privateKey, pkToken };
+      return { privateKey, pkToken, balance, nonce };
     } catch (error) {
       throw new PrismaError(
         "[PK] Get Private Key",
@@ -152,6 +154,7 @@ export class TransactionPrismaLibrary extends PrismaClient {
     txUuid: string,
     txHash: string,
     nonce: bigint,
+    subtractedBalance: bigint,
   ): Promise<void> {
     try {
       await this.transaction.update({
@@ -175,6 +178,7 @@ export class TransactionPrismaLibrary extends PrismaClient {
       await this.account.update({
         data: {
           nonce: addedNonce,
+          balance: subtractedBalance,
         },
         where: {
           address: from,

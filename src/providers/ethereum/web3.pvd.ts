@@ -46,6 +46,20 @@ export class Web3Client {
     }
   }
 
+  public async getBalance(from: string) {
+    try {
+      const balance = await this.client.eth.getBalance(from);
+
+      return balance;
+    } catch (error) {
+      throw new Web3Error(
+        "[BALANCE] Get Balance",
+        "Get Balance Error.",
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
   public async getGasPrice() {
     try {
       const gasPrice = await this.client.eth.getGasPrice();
