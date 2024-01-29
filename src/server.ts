@@ -2,7 +2,7 @@ import { Logger } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { shutdown } from "@utils/shutdown.utils";
-import { AppModule } from "app.module";
+import { AppModule } from "@modules/app.module";
 import helmet from "helmet";
 
 export const bootstrap = async () => {
