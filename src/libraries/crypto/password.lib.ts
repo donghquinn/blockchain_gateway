@@ -1,32 +1,30 @@
 import { randomBytes } from "crypto";
 
-const createTokenBase = ( ) => randomBytes( 16 ).toString("base64");
+const createTokenBase = () => randomBytes(16).toString("base64");
 
-export const cryptPassword = ( password: string ) => {
-    const base = createTokenBase();
+export const cryptPassword = (password: string) => {
+  const passwordToken = createTokenBase();
 
-    const baseString = base + password;
+  const baseString = passwordToken + password;
 
-    const encodedPassword = Buffer.from( baseString ).toString( "base64" )
-    
-    return encodedPassword;
+  const encodedPassword = Buffer.from(baseString).toString("base64");
+
+  return { encodedPassword, passwordToken };
 };
 
-export const cryptPrivateKey = ( privateKey: string ) =>
-{
-    const base = createTokenBase();
+export const cryptPrivateKey = (privateKey: string) => {
+  const pkToken = createTokenBase();
 
-    const baseString = base + privateKey;
+  const baseString = pkToken + privateKey;
 
-    const encodedPrivateKey = Buffer.from( baseString ).toString( "base64" );
+  const encodedPrivateKey = Buffer.from(baseString).toString("base64");
 
-    return encodedPrivateKey;
+  return { encodedPrivateKey, pkToken };
 };
 
-export const cryptPasswordAndPk = ( password: string, privateKey: string ) =>
-{
-    const cryptedPassword = cryptPassword( password );
-    const cryptedPrivateKey = cryptPrivateKey( privateKey );
+export const cryptPasswordAndPk = (password: string, privateKey: string) => {
+  const { encodedPassword, passwordToken } = cryptPassword(password);
+  const { encodedPrivateKey, pkToken } = cryptPrivateKey(privateKey);
 
-    return {cryptedPassword, cryptedPrivateKey}
-}
+  return { encodedPassword, passwordToken, encodedPrivateKey, pkToken };
+};

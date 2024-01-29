@@ -12,6 +12,7 @@ datasource db {
 
 model Account {
   uuid String @id @default(uuid())
+  email String
   address String @unique
   password String
   privateKey String

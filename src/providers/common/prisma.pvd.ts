@@ -19,7 +19,7 @@ export class PrismaLibrary extends PrismaClient {
           password,
           passwordToken,
           pkToken,
-          privateKey
+          privateKey,
         },
       });
     } catch (error) {

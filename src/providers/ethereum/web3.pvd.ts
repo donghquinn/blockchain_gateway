@@ -15,12 +15,13 @@ export class Web3Client {
     this.provider =
       process.env.ALCHEMY_RPC !== undefined
         ? process.env.ALCHEMY_RPC
-        : "https://dong-rpc.donghyuns.com";
+        : // It's not exist rpc url. Can be replaced if you have own network
+          "https://dong-rpc.donghyuns.com";
 
     this.client = new Web3(new Web3.providers.HttpProvider(this.provider));
   }
 
-  async createAccount() {
+  public createAccount() {
     try {
       const accountInfo = this.client.eth.accounts.create();
 
