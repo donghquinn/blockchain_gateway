@@ -28,7 +28,9 @@ export class ClientController {
     try {
       const { email, password } = await loginRequestValidator(request);
 
-      await this.account.login(email, password);
+      const uuid = await this.account.login(email, password);
+
+      return setResponse(200, { uuid });
     } catch (error) {
       return setErrorResponse(error);
     }

@@ -1,12 +1,12 @@
+import { TransactionError } from '@errors/transaction.error';
 import { decrypt } from '@libraries/crypto/decrypt.lib';
+import { decideBalance, subtractBalance } from '@libraries/transaction/balance.lib';
 import { decideNonce } from '@libraries/transaction/nonce.lib';
+import { createTransaction } from '@libraries/transaction/transaction.lib';
 import { Injectable } from '@nestjs/common';
 import { TransactionLogger } from '@utils/logger.util';
 import { Web3Client } from 'providers/ethereum/web3.pvd';
-import { Transaction } from 'web3';
 import { TransactionPrismaLibrary } from './transaction-prisma.pvd';
-import { decideBalance, subtractBalance } from '@libraries/transaction/balance.lib';
-import { TransactionError } from '@errors/transaction.error';
 
 @Injectable()
 export class TransactionProvider {
@@ -38,7 +38,7 @@ export class TransactionProvider {
       await this.prisma.updateTransactionNonce(from, txUuid, nonce);
 
       // create Raw Transaction
-      const rawTx = this.createTransaction(from, to, nonce, value, gas, gasPrice);
+      const rawTx = createTransaction(from, to, nonce, value, gas, gasPrice);
 
       // Sign and Send
       const signedTx = await this.client.sendTransaction(decryptedPrivateKey, rawTx);
@@ -60,18 +60,5 @@ export class TransactionProvider {
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }
-  }
-
-  createTransaction(from: string, to: string, nonce: bigint, value: bigint, gas: bigint, gasPrice: bigint) {
-    const rawTransaction: Transaction = {
-      from,
-      to,
-      value,
-      gas,
-      gasPrice,
-      nonce,
-    };
-
-    return rawTransaction;
   }
 }
