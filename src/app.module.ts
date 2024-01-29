@@ -1,4 +1,4 @@
-import { ClientModule } from "@modules/account.module";
+import { ClientModule } from "@modules/account/account.module";
 import { Module } from "@nestjs/common";
 
 @Module({

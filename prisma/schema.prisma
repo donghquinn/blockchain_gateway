@@ -54,6 +54,7 @@ model Transaction {
   gasPrice BigInt?
   nonce BigInt?
   blockNumber String?
+  txHash String?
   status String
   created DateTime @default(now())
   updated DateTime @updatedAt()

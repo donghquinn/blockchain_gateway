@@ -3,13 +3,13 @@ import { cryptPassword, cryptPrivateKey } from "@libraries/crypto/crypto.lib";
 import { comparePassword } from "@libraries/crypto/decrypt.lib";
 import { Injectable } from "@nestjs/common";
 import { ClientLogger } from "@utils/logger.util";
-import { PrismaLibrary } from "providers/common/prisma.pvd";
 import { Web3Client } from "providers/ethereum/web3.pvd";
+import { AccountPrismaLibrary } from "./account-prisma.pvd";
 
 @Injectable()
 export class ClientProvider {
   constructor(
-    private readonly prisma: PrismaLibrary,
+    private readonly prisma: AccountPrismaLibrary,
     private readonly client: Web3Client,
   ) {}
 
