@@ -11,7 +11,7 @@ export class AccountProvider {
     private readonly client: Web3Client,
   ) {}
 
-  async createAccount(password: string) {
+  async createAccount(email: string, password: string) {
     try {
       const { address, privateKey } = this.client.createAccount();
 
@@ -19,6 +19,7 @@ export class AccountProvider {
         cryptPasswordAndPk(password, privateKey);
 
       await this.prisma.insertNewAccountInfo(
+        email,
         address,
         encodedPrivateKey,
         encodedPassword,

@@ -6,6 +6,7 @@ import { PrismaClient } from "@prisma/client";
 @Injectable()
 export class PrismaLibrary extends PrismaClient {
   async insertNewAccountInfo(
+    email: string,
     address: string,
     privateKey: string,
     password: string,
@@ -15,6 +16,7 @@ export class PrismaLibrary extends PrismaClient {
     try {
       await this.account.create({
         data: {
+          email,
           address,
           password,
           passwordToken,
