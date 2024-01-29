@@ -4,7 +4,7 @@ export const compareNonce = (networkNonce: bigint, dbNonce: bigint) =>
 export const decideNonce = (networkNonce: bigint, dbNonce: bigint) => {
   const isSame = compareNonce(networkNonce, dbNonce);
 
-  // Higher preference on network nonce.
+  // Higher priority on network nonce.
   const nonce = !isSame ? networkNonce : dbNonce;
 
   return nonce;

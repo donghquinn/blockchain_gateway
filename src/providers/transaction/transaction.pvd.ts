@@ -3,7 +3,7 @@ import { decideNonce } from "@libraries/transaction/nonce.lib";
 import { Injectable } from "@nestjs/common";
 import { TransactionLogger } from "@utils/logger.util";
 import { Web3Client } from "providers/ethereum/web3.pvd";
-import { TransactionError } from "web3";
+import { Transaction, TransactionError } from "web3";
 import { TransactionPrismaLibrary } from "./transaction-prisma.pvd";
 import {
   decideBalance,
@@ -17,13 +17,7 @@ export class TransactionProvider {
     private readonly prisma: TransactionPrismaLibrary,
   ) {}
 
-  async sendTransaction(
-    from: string,
-    to: string,
-    value: bigint,
-    gas: bigint,
-    clientUuid: string,
-  ) {
+  async sendTransaction(from: string, to: string, value: bigint, gas: bigint) {
     try {
       const txUuid = await this.prisma.insertNewTransaction(
         from,
@@ -38,29 +32,40 @@ export class TransactionProvider {
         balance: dbBalance,
         nonce: dbNonce,
       } = await this.prisma.getPkandAccountData(from);
+
+      // Create Balance from DB and Network. Network Balance has higher priority.
       const networkBalance = await this.client.getBalance(from);
       const balance = decideBalance(networkBalance, dbBalance);
 
+      // Decrypt Encrypted PrivateKey
       const decryptedPrivateKey = decrypt(privateKey, pkToken);
 
       const gasPrice = await this.client.getGasPrice();
       await this.prisma.updateTransactionGasPrice(from, txUuid, gasPrice);
 
+      // Compare Db Nonce and Network Nonce. Network Nonce has higher priority
       const networkNonce = await this.client.getNonce(from);
       const nonce = decideNonce(networkNonce, dbNonce);
 
       await this.prisma.updateTransactionNonce(from, txUuid, nonce);
 
-      const signedTx = await this.client.sendTransaction(
+      // create Raw Transaction
+      const rawTx = this.createTransaction(
         from,
         to,
-        decryptedPrivateKey,
+        nonce,
+        value,
         gas,
         gasPrice,
-        value,
-        nonce,
       );
 
+      // Sign and Send
+      const signedTx = await this.client.sendTransaction(
+        decryptedPrivateKey,
+        rawTx,
+      );
+
+      // Balance Subtraction
       const subtractedBalance = subtractBalance(balance, value);
 
       await this.prisma.updateSentTransactionStatus(
@@ -82,5 +87,25 @@ export class TransactionProvider {
         "Send Transaction Error. Please Try Again.",
       );
     }
+  }
+
+  createTransaction(
+    from: string,
+    to: string,
+    nonce: bigint,
+    value: bigint,
+    gas: bigint,
+    gasPrice: bigint,
+  ) {
+    const rawTransaction: Transaction = {
+      from,
+      to,
+      value,
+      gas,
+      gasPrice,
+      nonce,
+    };
+
+    return rawTransaction;
   }
 }

@@ -74,28 +74,11 @@ export class Web3Client {
     }
   }
 
-  async sendTransaction(
-    from: string,
-    to: string,
-    privateKey: string,
-    gas: bigint,
-    gasPrice: bigint,
-    value: bigint,
-    nonce: bigint,
-  ) {
+  async sendTransaction(privateKey: string, rawTx: Transaction) {
     try {
       const account = this.client.eth.accounts.privateKeyToAccount(privateKey);
 
-      const rawTransaction: Transaction = {
-        from,
-        to,
-        value,
-        gas,
-        gasPrice,
-        nonce,
-      };
-
-      const signedTx = await account.signTransaction(rawTransaction);
+      const signedTx = await account.signTransaction(rawTx);
 
       return signedTx;
     } catch (error) {
