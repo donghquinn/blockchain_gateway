@@ -50,9 +50,9 @@ export class ClientController {
   @Post('account/create')
   async createAccount(@Body() request: CreateAccountRequest) {
     try {
-      const { password } = await createAccountValidator(request);
+      const { uuid } = await createAccountValidator(request);
 
-      const result = await this.account.createAccount(password);
+      const result = await this.account.createAccount(uuid);
 
       return setResponse(200, { result });
     } catch (error) {

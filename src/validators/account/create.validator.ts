@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 export const createAccountValidator = async (request: CreateAccountRequest) => {
   try {
-    const scheme = z.object({ password: z.string() });
+    const scheme = z.object({ uuid: z.string() });
 
     const validated = await scheme.parseAsync(request);
 

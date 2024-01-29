@@ -1,5 +1,5 @@
 export interface CreateAccountRequest {
-  password: string;
+  uuid: string;
 }
 
 export interface CreateClientRequest {
