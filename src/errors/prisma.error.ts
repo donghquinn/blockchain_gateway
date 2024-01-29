@@ -4,7 +4,7 @@ export class PrismaError extends Error {
   constructor(type: string, message: string, cause?: Error) {
     super(message);
 
-    this.name = "[Prisma Error]";
+    this.name = '[Prisma Error]';
     this.type = type;
     this.cause = cause;
   }

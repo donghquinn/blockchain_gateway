@@ -897,6 +897,7 @@ __metadata:
     eslint-config-airbnb-typescript: "npm:^17.1.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.29.1"
+    express: "npm:^4.18.2"
     helmet: "npm:^7.1.0"
     prettier: "npm:^3.2.2"
     prisma: "npm:^5.8.1"
@@ -1659,7 +1660,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:4.18.2":
+"express@npm:4.18.2, express@npm:^4.18.2":
   version: 4.18.2
   resolution: "express@npm:4.18.2"
   dependencies:

@@ -1,8 +1,8 @@
-import { AccountError } from "@errors/client.error";
-import { PrismaError } from "@errors/prisma.error";
-import { TransactionError } from "@errors/transaction.error";
-import { ValidatorError } from "@errors/validator.error";
-import { Web3Error } from "@errors/web3.error";
+import { ClientError } from '@errors/client.error';
+import { PrismaError } from '@errors/prisma.error';
+import { TransactionError } from '@errors/transaction.error';
+import { ValidatorError } from '@errors/validator.error';
+import { Web3Error } from '@errors/web3.error';
 
 interface KeyableObject {
   [key: string]: unknown;
@@ -37,7 +37,7 @@ export const setErrorResponse = (errorMessage: unknown) => {
   } else if (errorMessage instanceof Web3Error) {
     errorMessageArray.push(errorMessage.name, errorMessage.cause);
     resCode = 303;
-  } else if (errorMessage instanceof AccountError) {
+  } else if (errorMessage instanceof ClientError) {
     errorMessageArray.push(errorMessage.name, errorMessage.cause);
     resCode = 304;
   } else if (errorMessage instanceof TransactionError) {
@@ -45,7 +45,7 @@ export const setErrorResponse = (errorMessage: unknown) => {
     resCode = 305;
   } else {
     resCode = 500;
-    errorMessageArray.push("Unknown Error Occured. Please Try Again.");
+    errorMessageArray.push('Unknown Error Occured. Please Try Again.');
   }
 
   const responseData: ResponseDto = {

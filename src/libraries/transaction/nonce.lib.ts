@@ -1,5 +1,4 @@
-export const compareNonce = (networkNonce: bigint, dbNonce: bigint) =>
-  networkNonce === dbNonce ? true : false;
+export const compareNonce = (networkNonce: bigint, dbNonce: bigint) => (networkNonce === dbNonce ? true : false);
 
 export const decideNonce = (networkNonce: bigint, dbNonce: bigint) => {
   const isSame = compareNonce(networkNonce, dbNonce);

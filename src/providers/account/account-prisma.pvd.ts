@@ -1,15 +1,11 @@
-import { PrismaError } from "@errors/prisma.error";
-import { Injectable } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
-import { PrismaLogger } from "@utils/logger.util";
+import { PrismaError } from '@errors/prisma.error';
+import { Injectable } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { PrismaLogger } from '@utils/logger.util';
 
 @Injectable()
 export class AccountPrismaLibrary extends PrismaClient {
-  async insertNewClientInfo(
-    email: string,
-    password: string,
-    passwordToken: string,
-  ): Promise<string> {
+  async insertNewClientInfo(email: string, password: string, passwordToken: string): Promise<string> {
     try {
       const { uuid } = await this.client.create({
         data: {
@@ -21,24 +17,19 @@ export class AccountPrismaLibrary extends PrismaClient {
 
       return uuid;
     } catch (error) {
-      PrismaLogger.error("[ACCOUNT] Insert New Client Error: %o", {
+      PrismaLogger.error('[ACCOUNT] Insert New Client Error: %o', {
         error,
       });
 
       throw new PrismaError(
-        "[ACCOUNT] Insert New Client Info",
-        "Insert New Client Info Error. Please Try Again.",
+        '[ACCOUNT] Insert New Client Info',
+        'Insert New Client Info Error. Please Try Again.',
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }
   }
 
-  async insertNewAccountInfo(
-    address: string,
-    privateKey: string,
-    pkToken: string,
-    clientUuid: string,
-  ): Promise<void> {
+  async insertNewAccountInfo(address: string, privateKey: string, pkToken: string, clientUuid: string): Promise<void> {
     try {
       await this.account.create({
         data: {
@@ -49,9 +40,11 @@ export class AccountPrismaLibrary extends PrismaClient {
         },
       });
     } catch (error) {
+      PrismaLogger.error('[ACCOUNT] Insert New Account Info Error: %o', { error });
+
       throw new PrismaError(
-        "[ACCOUNT] Insert New Account Info",
-        "Insert New Account Info Error. Please Try Again.",
+        '[ACCOUNT] Insert New Account Info',
+        'Insert New Account Info Error. Please Try Again.',
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }
@@ -71,25 +64,22 @@ export class AccountPrismaLibrary extends PrismaClient {
       });
 
       if (result === null) {
-        PrismaLogger.error("[LOGIN] No Matching Data Found: %o", {
+        PrismaLogger.error('[LOGIN] No Matching Data Found: %o', {
           email,
         });
 
-        throw new PrismaError(
-          "[LOGIN] Bring Password Token",
-          "No Matching Data Found. Please Try Again.",
-        );
+        throw new PrismaError('[LOGIN] Bring Password Token', 'No Matching Data Found. Please Try Again.');
       }
 
       return result;
     } catch (error) {
-      PrismaLogger.error("[LOGIN] Bring Password Token Error: %o", {
+      PrismaLogger.error('[LOGIN] Bring Password Token Error: %o', {
         error,
       });
 
       throw new PrismaError(
-        "[LOGIN] Bring Password Token",
-        "Bring Password Token Error. Please Try Again.",
+        '[LOGIN] Bring Password Token',
+        'Bring Password Token Error. Please Try Again.',
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }

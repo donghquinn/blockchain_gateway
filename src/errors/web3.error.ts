@@ -4,7 +4,7 @@ export class Web3Error extends Error {
   constructor(type: string, message: string, cause?: Error) {
     super(message);
 
-    this.name = "[Web3 Error]";
+    this.name = '[Web3 Error]';
     this.type = type;
     this.cause = cause;
   }
