@@ -3,7 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "app.module";
 
-export const bootStrap = async () => {
+export const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ["debug", "log", "error"],
   });
