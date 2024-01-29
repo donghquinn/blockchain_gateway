@@ -1,7 +1,8 @@
 import { PrismaError } from "@errors/prisma.error";
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
-import { PrismaLogger } from "@utils/logger.util";
+import { PrismaLogger, TransactionLogger } from "@utils/logger.util";
+import { TransactionError } from "web3";
 
 @Injectable()
 export class TransactionPrismaLibrary extends PrismaClient {
@@ -20,7 +21,7 @@ export class TransactionPrismaLibrary extends PrismaClient {
       if (result === null) {
         PrismaLogger.error("[PK] Query Result is Null: %o", { from });
 
-        throw new PrismaError(
+        throw new TransactionError(
           "[PK] Query Private Key",
           "Query Private Key is empty. Please Try Again.",
         );
@@ -50,7 +51,7 @@ export class TransactionPrismaLibrary extends PrismaClient {
       if (result === null) {
         PrismaLogger.error("[NONCE] Get Nonce is Null");
 
-        throw new PrismaError(
+        throw new TransactionError(
           "[NONCE] Get Nonce",
           "Get Nonce Error. Please Try again.",
         );
@@ -150,6 +151,7 @@ export class TransactionPrismaLibrary extends PrismaClient {
     from: string,
     txUuid: string,
     txHash: string,
+    nonce: bigint,
   ): Promise<void> {
     try {
       await this.transaction.update({
@@ -160,6 +162,22 @@ export class TransactionPrismaLibrary extends PrismaClient {
         where: {
           from,
           uuid: txUuid,
+        },
+      });
+
+      const addedNonce = nonce + 1n;
+
+      TransactionLogger.info("Nonce Add: %o", {
+        nonce,
+        addedNonce,
+      });
+
+      await this.account.update({
+        data: {
+          nonce: addedNonce,
+        },
+        where: {
+          address: from,
         },
       });
     } catch (error) {

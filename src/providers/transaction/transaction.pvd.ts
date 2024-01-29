@@ -56,7 +56,10 @@ export class TransactionProvider {
         from,
         txUuid,
         signedTx.transactionHash,
+        nonce,
       );
+
+      return signedTx.transactionHash;
     } catch (error) {
       TransactionLogger.error("[SEND] Send Transaction Error: %o", {
         error,
