@@ -1,4 +1,4 @@
-import { AccountError } from "@errors/account.error";
+import { AccountError } from "@errors/client.error";
 import { PrismaError } from "@errors/prisma.error";
 import { TransactionError } from "@errors/transaction.error";
 import { ValidatorError } from "@errors/validator.error";

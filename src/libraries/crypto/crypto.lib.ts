@@ -1,13 +1,15 @@
-import { randomBytes } from "crypto";
+import { createHash, randomBytes } from "crypto";
 
 const createTokenBase = () => randomBytes(16).toString("base64");
 
 export const cryptPassword = (password: string) => {
   const passwordToken = createTokenBase();
 
-  const baseString = passwordToken + password;
+  const hashBase = createHash("sha256");
 
-  const encodedPassword = Buffer.from(baseString).toString("base64");
+  const rawKey = passwordToken + password;
+
+  const encodedPassword = hashBase.update(rawKey, "utf-8").digest("hex");
 
   return { encodedPassword, passwordToken };
 };
@@ -15,9 +17,10 @@ export const cryptPassword = (password: string) => {
 export const cryptPrivateKey = (privateKey: string) => {
   const pkToken = createTokenBase();
 
-  const baseString = pkToken + privateKey;
+  const hashBase = createHash("sha256");
+  const rawKey = pkToken + privateKey;
 
-  const encodedPrivateKey = Buffer.from(baseString).toString("base64");
+  const encodedPrivateKey = hashBase.update(rawKey, "utf-8").digest("hex");
 
   return { encodedPrivateKey, pkToken };
 };
