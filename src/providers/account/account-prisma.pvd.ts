@@ -40,6 +40,8 @@ export class AccountPrismaLibrary extends PrismaClient {
         },
       });
     } catch (error) {
+      PrismaLogger.error('[ACCOUNT] Insert New Account Info Error: %o', { error });
+
       throw new PrismaError(
         '[ACCOUNT] Insert New Account Info',
         'Insert New Account Info Error. Please Try Again.',
