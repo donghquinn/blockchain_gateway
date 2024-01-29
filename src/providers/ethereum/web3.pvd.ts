@@ -1,8 +1,5 @@
 import { Web3Error } from "@errors/web3.error";
-import { cryptPasswordAndPk } from "@libraries/crypto/password.lib";
 import { Injectable } from "@nestjs/common";
-import { PrismaLibrary } from "providers/common/prisma.pvd";
-import { NetworkConfig } from "types/network.type";
 import Web3 from "web3";
 
 @Injectable()

@@ -5,23 +5,43 @@ import { PrismaClient } from "@prisma/client";
 
 @Injectable()
 export class PrismaLibrary extends PrismaClient {
-  async insertNewAccountInfo(
+  async insertNewClientInfo(
     email: string,
-    address: string,
-    privateKey: string,
     password: string,
     passwordToken: string,
+  ): Promise<string> {
+    try {
+      const { uuid } = await this.client.create({
+        data: {
+          email,
+          password,
+          passwordToken,
+        },
+      });
+
+      return uuid;
+    } catch (error) {
+      throw new PrismaError(
+        "[ACCOUNT] Insert New Client Info",
+        "Insert New Client Info Error. Please Try Again.",
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  async insertNewAccountInfo(
+    address: string,
+    privateKey: string,
     pkToken: string,
+    clientUuid: string,
   ): Promise<void> {
     try {
       await this.account.create({
         data: {
-          email,
           address,
-          password,
-          passwordToken,
           pkToken,
           privateKey,
+          clientUuid,
         },
       });
     } catch (error) {

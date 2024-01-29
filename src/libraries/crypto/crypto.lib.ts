@@ -21,10 +21,3 @@ export const cryptPrivateKey = (privateKey: string) => {
 
   return { encodedPrivateKey, pkToken };
 };
-
-export const cryptPasswordAndPk = (password: string, privateKey: string) => {
-  const { encodedPassword, passwordToken } = cryptPassword(password);
-  const { encodedPrivateKey, pkToken } = cryptPrivateKey(privateKey);
-
-  return { encodedPassword, passwordToken, encodedPrivateKey, pkToken };
-};
