@@ -35,7 +35,7 @@ export class Web3Client {
   public async getNonce(from: string) {
     try {
       const nonceValue = await this.client.eth.getTransactionCount(from);
-      const dbNonce = await this;
+
       return nonceValue;
     } catch (error) {
       throw new Web3Error(
@@ -66,7 +66,7 @@ export class Web3Client {
     privateKey: string,
     gas: bigint,
     gasPrice: bigint,
-    value: number,
+    value: bigint,
     nonce: bigint,
   ) {
     try {

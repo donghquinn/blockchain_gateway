@@ -1,7 +1,4 @@
-import { ClientError } from "@errors/client.error";
 import { PrismaError } from "@errors/prisma.error";
-import { TransactionError } from "@errors/transaction.error";
-import { Web3Error } from "@errors/web3.error";
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { PrismaLogger } from "@utils/logger.util";
@@ -36,7 +33,62 @@ export class PrismaLibrary extends PrismaClient {
     }
   }
 
-  async getNonce(from: string): Promise<number> {
+  async insertNewAccountInfo(
+    address: string,
+    privateKey: string,
+    pkToken: string,
+    clientUuid: string,
+  ): Promise<void> {
+    try {
+      await this.account.create({
+        data: {
+          address,
+          pkToken,
+          privateKey,
+          clientUuid,
+        },
+      });
+    } catch (error) {
+      throw new PrismaError(
+        "[ACCOUNT] Insert New Account Info",
+        "Insert New Account Info Error. Please Try Again.",
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  async getPk(from: string) {
+    try {
+      const result = await this.account.findFirst({
+        select: {
+          privateKey: true,
+          pkToken: true,
+        },
+        where: {
+          address: from,
+        },
+      });
+
+      if (result === null) {
+        PrismaLogger.error("[PK] Query Result is Null: %o", { from });
+
+        throw new PrismaError(
+          "[PK] Query Private Key",
+          "Query Private Key is empty. Please Try Again.",
+        );
+      }
+      const { privateKey, pkToken } = result;
+
+      return { privateKey, pkToken };
+    } catch (error) {
+      throw new PrismaError(
+        "[PK] Get Private Key",
+        "Get Private Key Error. Please Try Again.",
+      );
+    }
+  }
+
+  async getNonce(from: string): Promise<bigint> {
     try {
       const result = await this.account.findFirst({
         select: {
@@ -50,7 +102,7 @@ export class PrismaLibrary extends PrismaClient {
       if (result === null) {
         PrismaLogger.error("[NONCE] Get Nonce is Null");
 
-        throw new TransactionError(
+        throw new PrismaError(
           "[NONCE] Get Nonce",
           "Get Nonce Error. Please Try again.",
         );
@@ -88,7 +140,7 @@ export class PrismaLibrary extends PrismaClient {
           email,
         });
 
-        throw new ClientError(
+        throw new PrismaError(
           "[LOGIN] Bring Password Token",
           "No Matching Data Found. Please Try Again.",
         );
@@ -108,26 +160,53 @@ export class PrismaLibrary extends PrismaClient {
     }
   }
 
-  async insertNewAccountInfo(
-    address: string,
-    privateKey: string,
-    pkToken: string,
-    clientUuid: string,
+  async insertNewTransaction(
+    from: string,
+    to: string,
+    value: bigint,
+    gas: bigint,
+  ): Promise<string> {
+    try {
+      const { uuid } = await this.transaction.create({
+        data: {
+          from,
+          to,
+          value,
+          gas,
+          status: "created",
+        },
+      });
+
+      return uuid;
+    } catch (error) {
+      throw new PrismaError(
+        "[PK] Get Private Key",
+        "Get Private Key Error. Please Try Again.",
+      );
+    }
+  }
+
+  async updateTransactionGasPrice(
+    from: string,
+    txUuid: string,
+    gasPrice: bigint,
   ): Promise<void> {
     try {
-      await this.account.create({
+      await this.transaction.update({
         data: {
-          address,
-          pkToken,
-          privateKey,
-          clientUuid,
+          from,
+          gasPrice,
+          status: "GasPrice Updated",
+        },
+        where: {
+          from,
+          uuid: txUuid,
         },
       });
     } catch (error) {
       throw new PrismaError(
-        "[ACCOUNT] Insert New Account Info",
-        "Insert New Account Info Error. Please Try Again.",
-        error instanceof Error ? error : new Error(JSON.stringify(error)),
+        "[PK] Get Private Key",
+        "Get Private Key Error. Please Try Again.",
       );
     }
   }

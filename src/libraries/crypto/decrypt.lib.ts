@@ -1,17 +1,18 @@
-import { createHash } from "crypto";
-import { cryptPassword } from "./crypto.lib";
-import { ClientError } from "@errors/client.error";
+import { createDecipheriv } from "crypto";
 
-const cryptReceivedPassword = (
-  receivedPassword: string,
-  passwordToken: string,
-) => {
-  const hashBase = createHash("sha256");
-  const base = receivedPassword + passwordToken;
+export const decrypt = (encryptedString: string, token: string): string => {
+  const secretKey = process.env.SECRET_KEY!;
 
-  const encodedReceivedPassword = hashBase.update(base, "utf-8").digest("hex");
+  const decipher = createDecipheriv(
+    "aes-256-cbc",
+    Buffer.from(secretKey),
+    Buffer.from(token, "hex"),
+  );
 
-  return encodedReceivedPassword;
+  let decrypted = decipher.update(encryptedString, "hex", "utf-8");
+  decrypted += decipher.final("utf-8");
+
+  return decrypted;
 };
 
 export const comparePassword = (
@@ -19,10 +20,7 @@ export const comparePassword = (
   encodedPassword: string,
   passwordToken: string,
 ): boolean => {
-  const encryptedReceivedPassword = cryptReceivedPassword(
-    receivedPassword,
-    passwordToken,
-  );
+  const decryptedPassword = decrypt(encodedPassword, passwordToken);
 
-  return encodedPassword !== encryptedReceivedPassword ? false : true;
+  return receivedPassword !== decryptedPassword ? false : true;
 };

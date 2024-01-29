@@ -1,26 +1,23 @@
-import { createHash, randomBytes } from "crypto";
-
-const createTokenBase = () => randomBytes(16).toString("base64");
+import { createCipheriv, randomBytes } from "crypto";
 
 export const cryptPassword = (password: string) => {
-  const passwordToken = createTokenBase();
+  const secretKey = process.env.SECRET_KEY!;
+  const iv = randomBytes(16); // Initialization vector
+  const cipher = createCipheriv("aes-256-cbc", Buffer.from(secretKey), iv);
 
-  const hashBase = createHash("sha256");
+  let encrypted = cipher.update(password, "utf-8", "hex");
+  encrypted += cipher.final("hex");
 
-  const rawKey = passwordToken + password;
-
-  const encodedPassword = hashBase.update(rawKey, "utf-8").digest("hex");
-
-  return { encodedPassword, passwordToken };
+  return { passwordToken: iv.toString("hex"), encodedPassword: encrypted };
 };
 
 export const cryptPrivateKey = (privateKey: string) => {
-  const pkToken = createTokenBase();
+  const secretKey = process.env.SECRET_KEY!;
+  const iv = randomBytes(16); // Initialization vector
+  const cipher = createCipheriv("aes-256-cbc", Buffer.from(secretKey), iv);
 
-  const hashBase = createHash("sha256");
-  const rawKey = pkToken + privateKey;
+  let encrypted = cipher.update(privateKey, "utf-8", "hex");
+  encrypted += cipher.final("hex");
 
-  const encodedPrivateKey = hashBase.update(rawKey, "utf-8").digest("hex");
-
-  return { encodedPrivateKey, pkToken };
+  return { pkToken: iv.toString("hex"), encodedPrivateKey: encrypted };
 };
