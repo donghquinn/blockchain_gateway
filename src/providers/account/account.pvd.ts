@@ -96,16 +96,18 @@ export class ClientProvider {
     }
   }
 
-  async getClientBalance(from: string) {
+  async getClientBalance(clientUuid: string) {
     try {
-      const isExist = this.searchKey(from);
+      const isExist = this.searchKey(clientUuid);
 
       if (!isExist) throw new ClientError('[BALANCE] Get Balance', 'User is Not Logined. Reject Reqeust.');
 
-      const balance = await this.client.getBalance(from);
+      const address = this.findItem(clientUuid);
+
+      const balance = await this.client.getBalance(address.item);
 
       ClientLogger.debug('[BALANCE] Got Balance: %o', {
-        from,
+        address,
         balance,
       });
 
@@ -149,5 +151,18 @@ export class ClientProvider {
     if (!isExist) throw new ClientError('[LOGIN] Search Logined Client', 'Not Found Logined Client. Reject.');
 
     this.clientMap.delete({ key: uuid });
+  }
+
+  private findItem(uuid: string) {
+    const item = this.clientMap.get({ key: uuid });
+
+    if (!item) throw new ClientError('[LOGIN] Search Logined Client', 'Not Found Logined Client. Reject.');
+
+    ClientLogger.debug('[FIND] Found Client Address: %o', {
+      uuid,
+      address: item.item,
+    });
+
+    return item;
   }
 }

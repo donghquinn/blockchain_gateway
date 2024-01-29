@@ -1,9 +1,13 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { loginRequestValidator, logoutRequestValidator } from '@validators/account/client.validator';
+import {
+  balanceRequestValidator,
+  loginRequestValidator,
+  logoutRequestValidator,
+} from '@validators/account/client.validator';
 import { createAccountValidator, createClienttValidator } from '@validators/account/create.validator';
 import { setErrorResponse, setResponse } from 'dto/response.dto';
 import { ClientProvider } from 'providers/account/account.pvd';
-import { LoginClientRequest, LogoutClientRequest } from 'types/account/client.type';
+import { BalanceClientRequest, LoginClientRequest, LogoutClientRequest } from 'types/account/client.type';
 import { CreateAccountRequest, CreateClientRequest } from 'types/account/create.type';
 
 @Controller('client')
@@ -57,6 +61,19 @@ export class ClientController {
       const result = await this.account.createAccount(uuid);
 
       return setResponse(200, { result });
+    } catch (error) {
+      return setErrorResponse(error);
+    }
+  }
+
+  @Post('account/balance')
+  async balanceController(@Body() request: BalanceClientRequest) {
+    try {
+      const { uuid } = await balanceRequestValidator(request);
+
+      const balance = await this.account.getClientBalance(uuid);
+
+      return setResponse(200, { balance });
     } catch (error) {
       return setErrorResponse(error);
     }

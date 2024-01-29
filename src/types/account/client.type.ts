@@ -6,6 +6,11 @@ export interface LoginClientRequest {
 export interface LogoutClientRequest {
   uuid: string;
 }
+
+export interface BalanceClientRequest {
+  uuid: string;
+}
+
 export interface LoginedClientKey {
   key: string;
 }
