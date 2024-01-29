@@ -1,7 +1,9 @@
 import { Logger } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import { shutdown } from "@utils/shutdown.utils";
 import { AppModule } from "app.module";
+import helmet from "helmet";
 
 export const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -9,8 +11,12 @@ export const bootstrap = async () => {
   });
 
   const port = process.env.APP_PORT !== undefined ? process.env.APP_PORT : 5500;
-
-  app.use();
+  
+  app.use(helmet());
+  app.enableCors();
+  app.enableVersioning();
+  app.useBodyParser('json');
+  app.enableShutdownHooks();
 
   await app.listen(port, () => {
     const message = `Gateway is Listening on ${port}`;
@@ -18,6 +24,10 @@ export const bootstrap = async () => {
 
     Logger.log(wrapper);
     Logger.log(message);
-    Logger.log(wrapper);
-  });
+    Logger.log( wrapper );
+    
+    process.send?.( "ready" );
+  } );
+  
+  process.on('SIGTERM', () => shutdown(app));
 };
