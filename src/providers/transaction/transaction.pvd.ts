@@ -2,7 +2,7 @@ import { TransactionError } from '@errors/transaction.error';
 import { decrypt } from '@libraries/crypto/decrypt.lib';
 import { decideBalance, subtractBalance } from '@libraries/transaction/balance.lib';
 import { decideNonce } from '@libraries/transaction/nonce.lib';
-import { createTransaction } from '@libraries/transaction/transaction.lib';
+import { createTransaction, transactionHashtoString } from '@libraries/transaction/transaction.lib';
 import { Injectable } from '@nestjs/common';
 import { TransactionLogger } from '@utils/logger.util';
 import { Web3Client } from 'providers/ethereum/web3.pvd';
@@ -41,12 +41,20 @@ export class TransactionProvider {
       const rawTx = createTransaction(from, to, nonce, value, gas, gasPrice);
 
       // Sign and Send
-      const signedTx = await this.client.sendTransaction(decryptedPrivateKey, rawTx);
+      const signedTx = await this.client.signTransaction(decryptedPrivateKey, rawTx);
+
+      await this.prisma.updateTransactionSigned(from, txUuid, signedTx.transactionHash);
+
+      const txReceipt = await this.client.sendTransaction(signedTx);
+
+      const { transactionHash } = txReceipt;
+
+      const txHash = transactionHashtoString(transactionHash);
 
       // Balance Subtraction
       const subtractedBalance = subtractBalance(balance, value);
 
-      await this.prisma.updateSentTransactionStatus(from, txUuid, signedTx.transactionHash, nonce, subtractedBalance);
+      await this.prisma.updateSentTransactionStatus(from, txUuid, txHash, nonce, subtractedBalance);
 
       return signedTx.transactionHash;
     } catch (error) {

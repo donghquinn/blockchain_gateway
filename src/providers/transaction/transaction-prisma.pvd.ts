@@ -21,15 +21,21 @@ export class TransactionPrismaLibrary extends PrismaClient {
       });
 
       if (result === null) {
-        PrismaLogger.error('[PK] Query Result is Null: %o', { from });
+        PrismaLogger.error('[PK_ACCOUNT] Query Result is Null: %o', { from });
 
-        throw new TransactionError('[PK] Query Private Key', 'Query Private Key is empty. Please Try Again.');
+        throw new TransactionError(
+          '[PK_ACCOUNT] Query Private Key and Account Data',
+          'Query Private Key is empty. Please Try Again.',
+        );
       }
       const { privateKey, pkToken, balance, nonce } = result;
 
       return { privateKey, pkToken, balance, nonce };
     } catch (error) {
-      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
+      throw new PrismaError(
+        '[PK_ACCOUNT]  Query Private Key and Account Data',
+        ' Query Private Key and Account Data Error. Please Try Again.',
+      );
     }
   }
 
@@ -52,13 +58,13 @@ export class TransactionPrismaLibrary extends PrismaClient {
 
       return result.nonce;
     } catch (error) {
-      PrismaLogger.error('[ACCOUNT] Insert New Client Error: %o', {
+      PrismaLogger.error('[NONCE] Get Nonce Error: %o', {
         error,
       });
 
       throw new PrismaError(
-        '[ACCOUNT] Insert New Client Info',
-        'Insert New Client Info Error. Please Try Again.',
+        '[NONCE] Get Nonce',
+        'Get Nonce Error. Please Try Again.',
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }
@@ -78,7 +84,15 @@ export class TransactionPrismaLibrary extends PrismaClient {
 
       return uuid;
     } catch (error) {
-      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
+      PrismaLogger.error('[TX_INSERT] Insert New Transaction Error: %o', {
+        error,
+      });
+
+      throw new PrismaError(
+        '[TX_INSERT] Insert New Transaction',
+        'Insert New Transaction Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
     }
   }
 
@@ -96,7 +110,15 @@ export class TransactionPrismaLibrary extends PrismaClient {
         },
       });
     } catch (error) {
-      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
+      PrismaLogger.error('[TX_GAS_PRICE] Update Transaction Gas Price Error: %o', {
+        error,
+      });
+
+      throw new PrismaError(
+        '[TX_GAS_PRICE] Update Transaction Gas Price',
+        'Update Transaction Gas Price Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
     }
   }
 
@@ -114,7 +136,40 @@ export class TransactionPrismaLibrary extends PrismaClient {
         },
       });
     } catch (error) {
-      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
+      PrismaLogger.error('[TX_NONCE] Update Transaction Nonce Error: %o', {
+        error,
+      });
+
+      throw new PrismaError(
+        '[TX_NONCE] Update Transaction Nonce',
+        'Update Transaction Nonce Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  async updateTransactionSigned(from: string, txUuid: string, txHash: string): Promise<void> {
+    try {
+      await this.transaction.update({
+        data: {
+          txHash,
+          status: 'Transaction Signed',
+        },
+        where: {
+          from,
+          uuid: txUuid,
+        },
+      });
+    } catch (error) {
+      PrismaLogger.error('[TX_SIGN] Update Signed Transaction Info Error: %o', {
+        error,
+      });
+
+      throw new PrismaError(
+        '[TX_SIGN] Update Signed Transaction Info',
+        'Update Signed Transaction Info Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
     }
   }
 
@@ -154,7 +209,15 @@ export class TransactionPrismaLibrary extends PrismaClient {
         },
       });
     } catch (error) {
-      throw new PrismaError('[PK] Get Private Key', 'Get Private Key Error. Please Try Again.');
+      PrismaLogger.error('[TX_SENT] Update Sent Transaction Info Error: %o', {
+        error,
+      });
+
+      throw new PrismaError(
+        '[TX_SENT] Update Sent Transaction Info',
+        'Update Sent Transaction Info Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
     }
   }
 }

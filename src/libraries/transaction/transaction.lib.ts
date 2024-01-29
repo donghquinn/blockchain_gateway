@@ -1,4 +1,4 @@
-import { Transaction } from 'web3';
+import { Bytes, Transaction } from 'web3';
 
 export const createTransaction = (
   from: string,
@@ -19,3 +19,5 @@ export const createTransaction = (
 
   return rawTransaction;
 };
+
+export const transactionHashtoString = (transactionHash: Bytes) => transactionHash.toString();

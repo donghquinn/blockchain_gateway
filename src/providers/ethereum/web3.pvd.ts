@@ -1,5 +1,6 @@
 import { Web3Error } from '@errors/web3.error';
 import { Injectable } from '@nestjs/common';
+import { SignedTransaction } from 'types/transaction/transaction.type';
 import Web3, { Transaction } from 'web3';
 
 @Injectable()
@@ -74,7 +75,7 @@ export class Web3Client {
     }
   }
 
-  async sendTransaction(privateKey: string, rawTx: Transaction) {
+  async signTransaction(privateKey: string, rawTx: Transaction) {
     try {
       const account = this.client.eth.accounts.privateKeyToAccount(privateKey);
 
@@ -84,6 +85,20 @@ export class Web3Client {
     } catch (error) {
       throw new Web3Error(
         '[SIGN] Sign Transction',
+        'Sign Transaction Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  async sendTransaction(signedTx: SignedTransaction) {
+    try {
+      const txReceipt = await this.client.eth.sendSignedTransaction(signedTx.rawTransaction);
+
+      return txReceipt;
+    } catch (error) {
+      throw new Web3Error(
+        '[SEND] Sign Transction',
         'Sign Transaction Error. Please Try Again.',
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
