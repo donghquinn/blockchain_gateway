@@ -104,6 +104,11 @@ export class ClientProvider {
 
       const balance = await this.client.getBalance(from);
 
+      ClientLogger.debug('[BALANCE] Got Balance: %o', {
+        from,
+        balance,
+      });
+
       return balance;
     } catch (error) {
       ClientLogger.error('[BALANCE] Get Balance Error: %o', {
