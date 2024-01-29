@@ -1,6 +1,6 @@
 import { Web3Error } from "@errors/web3.error";
 import { Injectable } from "@nestjs/common";
-import Web3 from "web3";
+import Web3, { Transaction } from "web3";
 
 @Injectable()
 export class Web3Client {
@@ -27,6 +27,67 @@ export class Web3Client {
       throw new Web3Error(
         "[ADDRESS] Create Address",
         "Create Address Error.",
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  public async getNonce(from: string) {
+    try {
+      const nonceValue = await this.client.eth.getTransactionCount(from);
+      const dbNonce = await this;
+      return nonceValue;
+    } catch (error) {
+      throw new Web3Error(
+        "[NONCE] Get Nonce",
+        "Get Nonce Error.",
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  public async getGasPrice() {
+    try {
+      const gasPrice = await this.client.eth.getGasPrice();
+
+      return gasPrice;
+    } catch (error) {
+      throw new Web3Error(
+        "[NONCE] Get Nonce",
+        "Get Nonce Error.",
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  async sendTransaction(
+    from: string,
+    to: string,
+    privateKey: string,
+    gas: bigint,
+    gasPrice: bigint,
+    value: number,
+    nonce: bigint,
+  ) {
+    try {
+      const account = this.client.eth.accounts.privateKeyToAccount(privateKey);
+
+      const rawTransaction: Transaction = {
+        from,
+        to,
+        value,
+        gas,
+        gasPrice,
+        nonce,
+      };
+
+      const signedTx = await account.signTransaction(rawTransaction);
+
+      return signedTx;
+    } catch (error) {
+      throw new Web3Error(
+        "[SIGN] Sign Transction",
+        "Sign Transaction Error. Please Try Again.",
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }

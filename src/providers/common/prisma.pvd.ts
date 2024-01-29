@@ -1,5 +1,6 @@
 import { ClientError } from "@errors/client.error";
 import { PrismaError } from "@errors/prisma.error";
+import { TransactionError } from "@errors/transaction.error";
 import { Web3Error } from "@errors/web3.error";
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
@@ -22,6 +23,40 @@ export class PrismaLibrary extends PrismaClient {
       });
 
       return uuid;
+    } catch (error) {
+      PrismaLogger.error("[ACCOUNT] Insert New Client Error: %o", {
+        error,
+      });
+
+      throw new PrismaError(
+        "[ACCOUNT] Insert New Client Info",
+        "Insert New Client Info Error. Please Try Again.",
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  async getNonce(from: string): Promise<number> {
+    try {
+      const result = await this.account.findFirst({
+        select: {
+          nonce: true,
+        },
+        where: {
+          address: from,
+        },
+      });
+
+      if (result === null) {
+        PrismaLogger.error("[NONCE] Get Nonce is Null");
+
+        throw new TransactionError(
+          "[NONCE] Get Nonce",
+          "Get Nonce Error. Please Try again.",
+        );
+      }
+
+      return result.nonce;
     } catch (error) {
       PrismaLogger.error("[ACCOUNT] Insert New Client Error: %o", {
         error,
