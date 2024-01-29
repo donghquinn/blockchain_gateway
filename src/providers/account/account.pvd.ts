@@ -69,13 +69,18 @@ export class ClientProvider {
     }
   }
 
-  async createAccount(email: string, clientUuid: string) {
+  async createAccount(clientUuid: string) {
     try {
+      const isExist = this.searchKey(clientUuid);
+
+      if (!isExist)
+        throw new ClientError('[ACCOUNT] Create Account', 'Create Account Error. Please Login and Try Again.');
+
       const { address, privateKey } = this.client.createAccount();
 
       const { encodedPrivateKey, pkToken } = cryptPrivateKey(privateKey);
 
-      await this.prisma.insertNewAccountInfo(email, encodedPrivateKey, pkToken, clientUuid);
+      await this.prisma.insertNewAccountInfo(address, encodedPrivateKey, pkToken, clientUuid);
 
       return address;
     } catch (error) {
@@ -91,6 +96,12 @@ export class ClientProvider {
     }
   }
 
+  logout(clientUuid: string) {
+    this.deleteItem(clientUuid);
+
+    return 'success';
+  }
+
   private searchKey(key: string) {
     const isExist = this.clientMap.has({ key });
 
@@ -103,5 +114,13 @@ export class ClientProvider {
     if (isExist) throw new ClientError('[LOGIN] Search Already Logined', 'Found Already Logined Client. Reject.');
 
     this.clientMap.set({ key: uuid }, { item: address });
+  }
+
+  private deleteItem(uuid: string) {
+    const isExist = this.searchKey(uuid);
+
+    if (!isExist) throw new ClientError('[LOGIN] Search Logined Client', 'Not Found Logined Client. Reject.');
+
+    this.clientMap.delete({ key: uuid });
   }
 }

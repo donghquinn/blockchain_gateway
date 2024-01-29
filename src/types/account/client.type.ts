@@ -3,6 +3,9 @@ export interface LoginClientRequest {
   password: string;
 }
 
+export interface LogoutClientRequest {
+  uuid: string;
+}
 export interface LoginedClientKey {
   key: string;
 }

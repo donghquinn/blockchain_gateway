@@ -1,6 +1,6 @@
 import { ValidatorError } from '@errors/validator.error';
 import { Logger } from '@utils/logger.util';
-import { LoginClientRequest } from 'types/account/client.type';
+import { LoginClientRequest, LogoutClientRequest } from 'types/account/client.type';
 import { z } from 'zod';
 
 export const loginRequestValidator = async (request: LoginClientRequest) => {
@@ -16,6 +16,24 @@ export const loginRequestValidator = async (request: LoginClientRequest) => {
     throw new ValidatorError(
       '[ACCOUNT] Validate Login Account',
       'Validate Login Account Error. Please Try Again.',
+      error instanceof Error ? error : new Error(JSON.stringify(error)),
+    );
+  }
+};
+
+export const logoutRequestValidator = async (request: LogoutClientRequest) => {
+  try {
+    const scheme = z.object({ uuid: z.string() });
+
+    const validated = await scheme.parseAsync(request);
+
+    return validated;
+  } catch (error) {
+    Logger.error('[LOGOUT] Validate Logout Account Error: %o', { error });
+
+    throw new ValidatorError(
+      '[LOGOUT] Validate Logout Account',
+      'Validate Logout Account Error. Please Try Again.',
       error instanceof Error ? error : new Error(JSON.stringify(error)),
     );
   }

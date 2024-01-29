@@ -1,19 +1,19 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { loginRequestValidator } from '@validators/account/client.validator';
-import { createAccountValidator } from '@validators/account/create.validator';
+import { loginRequestValidator, logoutRequestValidator } from '@validators/account/client.validator';
+import { createAccountValidator, createClienttValidator } from '@validators/account/create.validator';
 import { setErrorResponse, setResponse } from 'dto/response.dto';
 import { ClientProvider } from 'providers/account/account.pvd';
-import { LoginClientRequest } from 'types/account/client.type';
-import { CreateAccountRequest } from 'types/account/create.type';
+import { LoginClientRequest, LogoutClientRequest } from 'types/account/client.type';
+import { CreateAccountRequest, CreateClientRequest } from 'types/account/create.type';
 
 @Controller('client')
 export class ClientController {
   constructor(private readonly account: ClientProvider) {}
 
   @Post('signup')
-  async createClient(@Body() request: CreateAccountRequest) {
+  async createClient(@Body() request: CreateClientRequest) {
     try {
-      const { email, password } = await createAccountValidator(request);
+      const { email, password } = await createClienttValidator(request);
 
       const result = await this.account.createClient(email, password);
 
@@ -34,12 +34,25 @@ export class ClientController {
     }
   }
 
+  @Post('logout')
+  async logoutContoller(@Body() request: LogoutClientRequest) {
+    try {
+      const { uuid } = await logoutRequestValidator(request);
+
+      const message = this.account.logout(uuid);
+
+      return setResponse(200, { message });
+    } catch (error) {
+      return setErrorResponse(error);
+    }
+  }
+
   @Post('account/create')
   async createAccount(@Body() request: CreateAccountRequest) {
     try {
-      const { email, password } = await createAccountValidator(request);
+      const { password } = await createAccountValidator(request);
 
-      const result = await this.account.createAccount(email, password);
+      const result = await this.account.createAccount(password);
 
       return setResponse(200, { result });
     } catch (error) {
