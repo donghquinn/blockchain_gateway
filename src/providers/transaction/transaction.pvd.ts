@@ -3,12 +3,13 @@ import { decideNonce } from "@libraries/transaction/nonce.lib";
 import { Injectable } from "@nestjs/common";
 import { TransactionLogger } from "@utils/logger.util";
 import { Web3Client } from "providers/ethereum/web3.pvd";
-import { Transaction, TransactionError } from "web3";
+import { Transaction } from "web3";
 import { TransactionPrismaLibrary } from "./transaction-prisma.pvd";
 import {
   decideBalance,
   subtractBalance,
 } from "@libraries/transaction/balance.lib";
+import { TransactionError } from "@errors/transaction.error";
 
 @Injectable()
 export class TransactionProvider {
@@ -85,6 +86,7 @@ export class TransactionProvider {
       throw new TransactionError(
         "[SEND] Send Transaction",
         "Send Transaction Error. Please Try Again.",
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }
   }
