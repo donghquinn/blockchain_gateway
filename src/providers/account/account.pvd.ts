@@ -45,7 +45,7 @@ export class ClientProvider {
       if (!isValid)
         throw new ClientError(
           "[LOGIN] Compare Password",
-          "Given Password is not matching with Client's",
+          "Given Password is not matching with Client's. Please Check and Try Again.",
         );
 
       return uuid;
