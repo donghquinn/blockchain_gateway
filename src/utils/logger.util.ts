@@ -27,14 +27,14 @@ class WinstonLogger {
 
   private logger: Winston.Logger;
 
-  private newsLogger: Winston.Logger;
-
-  private climateLogger: Winston.Logger;
-
   private clientLogger: Winston.Logger;
 
+  private transactionLogger: Winston.Logger;
+
+  private prismaLogger: Winston.Logger;
+
   private constructor() {
-    this.newsLogger = Winston.createLogger({
+    this.prismaLogger = Winston.createLogger({
       level: process.env.NODE_ENV === "production" ? "info" : "debug",
       format: combine(
         splat(),
@@ -48,7 +48,7 @@ class WinstonLogger {
         new WinstonDaily({
           datePattern: "YYYY-MM-DD",
           dirname: dirSaveName,
-          filename: "%DATE%.news.log",
+          filename: "%DATE%.prisma.log",
           maxFiles: 30,
           zippedArchive: true,
         }),
@@ -69,14 +69,14 @@ class WinstonLogger {
         new WinstonDaily({
           datePattern: "YYYY-MM-DD",
           dirname: dirSaveName,
-          filename: "%DATE%.news.log",
+          filename: "%DATE%.client.log",
           maxFiles: 30,
           zippedArchive: true,
         }),
       ],
     });
 
-    this.climateLogger = Winston.createLogger({
+    this.transactionLogger = Winston.createLogger({
       level: process.env.NODE_ENV === "production" ? "info" : "debug",
       format: combine(
         splat(),
@@ -90,7 +90,7 @@ class WinstonLogger {
         new WinstonDaily({
           datePattern: "YYYY-MM-DD",
           dirname: dirSaveName,
-          filename: "%DATE%.climate.log",
+          filename: "%DATE%.transaction.log",
           maxFiles: 30,
           zippedArchive: true,
         }),
@@ -135,12 +135,12 @@ class WinstonLogger {
 
     return {
       Logger: this.instance.logger,
-      NewsLogger: this.instance.newsLogger,
-      ClimateLogger: this.instance.climateLogger,
+      TransactionLogger: this.instance.transactionLogger,
       ClientLogger: this.instance.clientLogger,
+      PrismaLogger: this.instance.prismaLogger,
     };
   }
 }
 
-export const { Logger, NewsLogger, ClimateLogger, ClientLogger } =
+export const { Logger, TransactionLogger, ClientLogger, PrismaLogger } =
   WinstonLogger.getInstance();

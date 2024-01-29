@@ -2,6 +2,7 @@ import { ClientError } from "@errors/client.error";
 import { cryptPassword, cryptPrivateKey } from "@libraries/crypto/crypto.lib";
 import { comparePassword } from "@libraries/crypto/decrypt.lib";
 import { Injectable } from "@nestjs/common";
+import { ClientLogger } from "@utils/logger.util";
 import { PrismaLibrary } from "providers/common/prisma.pvd";
 import { Web3Client } from "providers/ethereum/web3.pvd";
 
@@ -24,8 +25,12 @@ export class ClientProvider {
 
       return uuid;
     } catch (error) {
+      ClientLogger.error("[CLIENT] Create Account Error: %o", {
+        error,
+      });
+
       throw new ClientError(
-        "[CREATE] Create Account",
+        "[CLIENT] Create Account",
         "Create Account Error. Please Try Again.",
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
@@ -42,17 +47,24 @@ export class ClientProvider {
 
       const isValid = comparePassword(password, dbPassword, passwordToken);
 
-      if (!isValid)
+      if (!isValid) {
+        ClientLogger.error("[LOGIN] Compare Password is Not Matching");
+
         throw new ClientError(
           "[LOGIN] Compare Password",
           "Given Password is not matching with Client's. Please Check and Try Again.",
         );
+      }
 
       return uuid;
     } catch (error) {
+      ClientLogger.error("[LOGIN] Create Client Error: %o", {
+        error,
+      });
+
       throw new ClientError(
-        "[CREATE] Create Account",
-        "Create Account Error. Please Try Again.",
+        "[LOGIN] Create Client",
+        "Create Client Error. Please Try Again.",
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }
@@ -73,8 +85,12 @@ export class ClientProvider {
 
       return address;
     } catch (error) {
+      ClientLogger.error("[ACCOUNT] Create Account Error: %o", {
+        error,
+      });
+
       throw new ClientError(
-        "[CREATE] Create Account",
+        "[ACCOUNT] Create Account",
         "Create Account Error. Please Try Again.",
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );

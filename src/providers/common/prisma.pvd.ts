@@ -3,6 +3,7 @@ import { PrismaError } from "@errors/prisma.error";
 import { Web3Error } from "@errors/web3.error";
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
+import { PrismaLogger } from "@utils/logger.util";
 
 @Injectable()
 export class PrismaLibrary extends PrismaClient {
@@ -22,6 +23,10 @@ export class PrismaLibrary extends PrismaClient {
 
       return uuid;
     } catch (error) {
+      PrismaLogger.error("[ACCOUNT] Insert New Client Error: %o", {
+        error,
+      });
+
       throw new PrismaError(
         "[ACCOUNT] Insert New Client Info",
         "Insert New Client Info Error. Please Try Again.",
@@ -43,16 +48,25 @@ export class PrismaLibrary extends PrismaClient {
         },
       });
 
-      if (result === null)
+      if (result === null) {
+        PrismaLogger.error("[LOGIN] No Matching Data Found: %o", {
+          email,
+        });
+
         throw new ClientError(
-          "[LOGIN] Select Password Token",
+          "[LOGIN] Bring Password Token",
           "No Matching Data Found. Please Try Again.",
         );
+      }
 
       return result;
     } catch (error) {
+      PrismaLogger.error("[LOGIN] Bring Password Token Error: %o", {
+        error,
+      });
+
       throw new PrismaError(
-        "[LOGIN] Select Password Token",
+        "[LOGIN] Bring Password Token",
         "Bring Password Token Error. Please Try Again.",
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
