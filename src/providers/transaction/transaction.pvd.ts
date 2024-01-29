@@ -25,6 +25,12 @@ export class TransactionProvider {
       const networkBalance = await this.client.getBalance(from);
       const balance = decideBalance(networkBalance, dbBalance);
 
+      TransactionLogger.debug('[SEND] Got Balance: %o', {
+        dbBalance,
+        networkBalance,
+        selectedBalance: balance,
+      });
+
       // Decrypt Encrypted PrivateKey
       const decryptedPrivateKey = decrypt(privateKey, pkToken);
 
@@ -34,6 +40,12 @@ export class TransactionProvider {
       // Compare Db Nonce and Network Nonce. Network Nonce has higher priority
       const networkNonce = await this.client.getNonce(from);
       const nonce = decideNonce(networkNonce, dbNonce);
+
+      TransactionLogger.debug('[SEND] Got Balance: %o', {
+        dbNonce,
+        networkNonce,
+        selectedNonce: nonce,
+      });
 
       await this.prisma.updateTransactionNonce(from, txUuid, nonce);
 
@@ -49,12 +61,24 @@ export class TransactionProvider {
 
       const { transactionHash } = txReceipt;
 
+      TransactionLogger.debug('[SEND] Got Tx Receipt: %o', {
+        transactionHash,
+      });
+
       const txHash = transactionHashtoString(transactionHash);
 
       // Balance Subtraction
       const subtractedBalance = subtractBalance(balance, value);
+      const networkSubtractedBalance = await this.client.getBalance(from);
+      const selectedNewBalance = decideBalance(networkSubtractedBalance, subtractedBalance);
 
-      await this.prisma.updateSentTransactionStatus(from, txUuid, txHash, nonce, subtractedBalance);
+      TransactionLogger.debug('[SEND] Subtracted Balance: %o', {
+        subtractedBalance,
+        networkSubtractedBalance,
+        selectedNewBalance,
+      });
+
+      await this.prisma.updateSentTransactionStatus(from, txUuid, txHash, nonce, selectedNewBalance);
 
       return signedTx.transactionHash;
     } catch (error) {

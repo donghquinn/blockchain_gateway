@@ -96,6 +96,33 @@ export class ClientProvider {
     }
   }
 
+  async getClientBalance(from: string) {
+    try {
+      const isExist = this.searchKey(from);
+
+      if (!isExist) throw new ClientError('[BALANCE] Get Balance', 'User is Not Logined. Reject Reqeust.');
+
+      const balance = await this.client.getBalance(from);
+
+      ClientLogger.debug('[BALANCE] Got Balance: %o', {
+        from,
+        balance,
+      });
+
+      return balance;
+    } catch (error) {
+      ClientLogger.error('[BALANCE] Get Balance Error: %o', {
+        error,
+      });
+
+      throw new ClientError(
+        '[BALANCE] Get Balance',
+        'Get Balance Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
   logout(clientUuid: string) {
     this.deleteItem(clientUuid);
 

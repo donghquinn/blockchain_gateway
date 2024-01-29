@@ -1,3 +1,4 @@
+import { ClientLogger } from '@utils/logger.util';
 import { createDecipheriv } from 'crypto';
 
 export const decrypt = (encryptedString: string, token: string): string => {
@@ -14,5 +15,10 @@ export const decrypt = (encryptedString: string, token: string): string => {
 export const comparePassword = (receivedPassword: string, encodedPassword: string, passwordToken: string): boolean => {
   const decryptedPassword = decrypt(encodedPassword, passwordToken);
 
-  return receivedPassword !== decryptedPassword ? false : true;
+  ClientLogger.debug('[COMPARE] Compare Decrypted Password: %o', {
+    receivedPassword,
+    decryptedPassword,
+  });
+
+  return receivedPassword === decryptedPassword;
 };
