@@ -29,19 +29,19 @@ export const setErrorResponse = (errorMessage: unknown) => {
   const errorMessageArray = [];
 
   if (errorMessage instanceof ValidatorError) {
-    errorMessageArray.push(errorMessage.name, errorMessage.cause);
+    errorMessageArray.push(errorMessage.type, errorMessage.message);
     resCode = 301;
   } else if (errorMessage instanceof PrismaError) {
-    errorMessageArray.push(errorMessage.name, errorMessage.cause);
+    errorMessageArray.push(errorMessage.type, errorMessage.message);
     resCode = 302;
   } else if (errorMessage instanceof Web3Error) {
-    errorMessageArray.push(errorMessage.name, errorMessage.cause);
+    errorMessageArray.push(errorMessage.type, errorMessage.message);
     resCode = 303;
   } else if (errorMessage instanceof ClientError) {
-    errorMessageArray.push(errorMessage.name, errorMessage.cause);
+    errorMessageArray.push(errorMessage.type, errorMessage.message);
     resCode = 304;
   } else if (errorMessage instanceof TransactionError) {
-    errorMessageArray.push(errorMessage.name, errorMessage.cause);
+    errorMessageArray.push(errorMessage.type, errorMessage.message);
     resCode = 305;
   } else {
     resCode = 500;
