@@ -20,6 +20,8 @@ class WinstonLogger {
 
   private clientLogger: Winston.Logger;
 
+  private managerLogger: Winston.Logger;
+
   private transactionLogger: Winston.Logger;
 
   private prismaLogger: Winston.Logger;
@@ -34,6 +36,21 @@ class WinstonLogger {
           datePattern: 'YYYY-MM-DD',
           dirname: dirSaveName,
           filename: '%DATE%.prisma.log',
+          maxFiles: 30,
+          zippedArchive: true,
+        }),
+      ],
+    });
+
+    this.managerLogger = Winston.createLogger({
+      level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+      format: combine(splat(), json(), colorize(), defaultTimestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), formatted),
+      transports: [
+        new Winston.transports.Console(),
+        new WinstonDaily({
+          datePattern: 'YYYY-MM-DD',
+          dirname: dirSaveName,
+          filename: '%DATE%.manager.log',
           maxFiles: 30,
           zippedArchive: true,
         }),
@@ -104,9 +121,10 @@ class WinstonLogger {
       Logger: this.instance.logger,
       TransactionLogger: this.instance.transactionLogger,
       ClientLogger: this.instance.clientLogger,
+      ManagerLogger: this.instance.managerLogger,
       PrismaLogger: this.instance.prismaLogger,
     };
   }
 }
 
-export const { Logger, TransactionLogger, ClientLogger, PrismaLogger } = WinstonLogger.getInstance();
+export const { Logger, TransactionLogger, ClientLogger, ManagerLogger, PrismaLogger } = WinstonLogger.getInstance();
