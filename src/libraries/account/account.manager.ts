@@ -19,12 +19,12 @@ export class AccountManager {
     return this.instance;
   }
 
-   public searchKey(clientUuid: string) {
+  public searchKey(clientUuid: string) {
     ClientLogger.debug('[LOGIN] Client Map: %o', {
       map: this.clientMap,
     });
 
-    return  this.clientMap.has({ key: clientUuid });
+    return this.clientMap.has({ key: clientUuid });
   }
 
   public setItem(uuid: string, address: string) {
@@ -32,20 +32,29 @@ export class AccountManager {
 
     if (isExist) throw new ClientError('[LOGIN] Search Already Logined', 'Found Already Logined Client. Reject.');
 
-      this.clientMap.set( { key: uuid }, { item: address } );
-      
-      ClientLogger.debug( "[LOGIN] Set Finished Map: %o", {
-          map: this.clientMap
-      } )
-      
-      const intevalTime = 1000 * 60 * 10;
+    this.clientMap.set({ key: uuid }, { item: address });
 
-      setInterval( () =>
-      {
-          ClientLogger.debug( "[LOGIN] As User Signed in for 10 minutes, Proceed Delete Login Map" );
+    ClientLogger.debug('[LOGIN] Set Finished Map: %o', {
+      map: this.clientMap,
+    });
 
-          this.deleteItem( uuid );
-      }, intevalTime)
+    const intevalTime = 1000 * 60 * 10;
+
+    const timer = setInterval(() => {
+      const isExistItem = this.searchKey(uuid);
+
+      if (!isExistItem) {
+        ClientLogger.info("[MANAGER] It's already deleted item. Clear");
+
+        clearInterval(timer);
+      }
+
+      ClientLogger.debug('[LOGIN] As User Signed in for 10 minutes, Proceed Delete Login Map');
+
+        this.deleteItem( uuid );
+        
+        clearInterval( timer );
+    }, intevalTime);
   }
 
   public deleteItem(uuid: string) {

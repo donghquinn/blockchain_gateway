@@ -16,7 +16,6 @@ export class ClientProvider {
     private readonly client: Web3Client,
   ) {
     this.accountManager = AccountManager.getInstance();
-
   }
 
   async createClient(email: string, password: string) {
@@ -133,14 +132,12 @@ export class ClientProvider {
   }
 
   logout(clientUuid: string) {
-    this.accountManager.deleteItem( clientUuid );
-    
+    this.accountManager.deleteItem(clientUuid);
+
     ClientLogger.debug('[LOGOUT] Logout: %o', {
       clientUuid,
     });
 
     return 'success';
   }
-
- 
 }
