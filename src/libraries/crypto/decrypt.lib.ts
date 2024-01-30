@@ -4,12 +4,15 @@ import { createDecipheriv } from 'crypto';
 export const decrypt = (encryptedString: string, token: string): string => {
   const secretKey = process.env.SECRET_KEY!;
 
-  const decipher = createDecipheriv('aes-256-cbc', Buffer.from(secretKey), Buffer.from(token, 'hex'));
+  const iv = Buffer.from(token, 'hex');
+  const encText = Buffer.from(encryptedString, 'hex');
 
-  let decrypted = decipher.update(encryptedString, 'hex', 'utf-8');
-  decrypted += decipher.final('utf-8');
+  const decipher = createDecipheriv('aes-256-cbc', Buffer.from(secretKey), iv);
 
-  return decrypted;
+  const decrypted = decipher.update(encText);
+  const decryptedString = Buffer.concat([decrypted, decipher.final()]).toString();
+
+  return decryptedString;
 };
 
 export const comparePassword = (receivedPassword: string, encodedPassword: string, passwordToken: string): boolean => {

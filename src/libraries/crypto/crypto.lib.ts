@@ -7,8 +7,7 @@ export const cryptPassword = (password: string) => {
 
   const encrypted = cipher.update(password);
 
-  const encryptedString = Buffer.concat( [ encrypted, cipher.final() ] ).toString( "hex" )
-  
+  const encryptedString = Buffer.concat([encrypted, cipher.final()]).toString('hex');
 
   return { passwordToken: iv.toString('hex'), encodedPassword: encryptedString };
 };
@@ -20,7 +19,7 @@ export const cryptPrivateKey = (privateKey: string) => {
 
   const encrypted = cipher.update(privateKey);
 
-  const encryptedString = Buffer.concat( [ encrypted, cipher.final() ] ).toString( "hex" )
-  
+  const encryptedString = Buffer.concat([encrypted, cipher.final()]).toString('hex');
+
   return { pkToken: iv.toString('hex'), encodedPrivateKey: encryptedString };
 };

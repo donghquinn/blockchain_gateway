@@ -1,21 +1,21 @@
 import { ClientError } from '@errors/client.error';
+import { AccountManager } from '@libraries/account/account.manager';
 import { cryptPassword, cryptPrivateKey } from '@libraries/crypto/crypto.lib';
 import { comparePassword } from '@libraries/crypto/decrypt.lib';
 import { Injectable } from '@nestjs/common';
 import { ClientLogger } from '@utils/logger.util';
 import { Web3Client } from 'providers/ethereum/web3.pvd';
-import { LoginedClientItem, LoginedClientKey } from 'types/account/client.type';
 import { AccountPrismaLibrary } from './account-prisma.pvd';
 
 @Injectable()
 export class ClientProvider {
-  private clientMap: WeakMap<LoginedClientKey, LoginedClientItem>;
+  private accountManager: AccountManager;
 
   constructor(
     private readonly prisma: AccountPrismaLibrary,
     private readonly client: Web3Client,
   ) {
-    this.clientMap = new WeakMap();
+    this.accountManager = AccountManager.getInstance();
   }
 
   async createClient(email: string, password: string) {
@@ -53,7 +53,13 @@ export class ClientProvider {
         );
       }
 
-      this.setItem(uuid, email);
+      ClientLogger.info('[LOGIN] Login Success');
+      this.accountManager.setItem(uuid, email);
+
+      ClientLogger.debug('[LOGIN] Set Item Finished: %o', {
+        uuid,
+        email,
+      });
 
       return uuid;
     } catch (error) {
@@ -71,10 +77,10 @@ export class ClientProvider {
 
   async createAccount(clientUuid: string) {
     try {
-      const isExist = this.searchKey(clientUuid);
+      const isExist = this.accountManager.searchKey(clientUuid);
 
       if (!isExist)
-        throw new ClientError('[ACCOUNT] Create Account', 'Create Account Error. Please Login and Try Again.');
+        throw new ClientError('[ACCOUNT] Create Account', 'User is Not Logined. Please Login and Try Again.');
 
       const { address, privateKey } = this.client.createAccount();
 
@@ -98,11 +104,11 @@ export class ClientProvider {
 
   async getClientBalance(clientUuid: string) {
     try {
-      const isExist = this.searchKey(clientUuid);
+      const isExist = this.accountManager.searchKey(clientUuid);
 
       if (!isExist) throw new ClientError('[BALANCE] Get Balance', 'User is Not Logined. Reject Reqeust.');
 
-      const address = this.findItem(clientUuid);
+      const address = this.accountManager.findItem(clientUuid);
 
       const balance = await this.client.getBalance(address.item);
 
@@ -126,43 +132,12 @@ export class ClientProvider {
   }
 
   logout(clientUuid: string) {
-    this.deleteItem(clientUuid);
+    this.accountManager.deleteItem(clientUuid);
 
-    return 'success';
-  }
-
-  private searchKey(key: string) {
-    const isExist = this.clientMap.has({ key });
-
-    return isExist;
-  }
-
-  private setItem(uuid: string, address: string) {
-    const isExist = this.searchKey(uuid);
-
-    if (isExist) throw new ClientError('[LOGIN] Search Already Logined', 'Found Already Logined Client. Reject.');
-
-    this.clientMap.set({ key: uuid }, { item: address });
-  }
-
-  private deleteItem(uuid: string) {
-    const isExist = this.searchKey(uuid);
-
-    if (!isExist) throw new ClientError('[LOGIN] Search Logined Client', 'Not Found Logined Client. Reject.');
-
-    this.clientMap.delete({ key: uuid });
-  }
-
-  private findItem(uuid: string) {
-    const item = this.clientMap.get({ key: uuid });
-
-    if (!item) throw new ClientError('[LOGIN] Search Logined Client', 'Not Found Logined Client. Reject.');
-
-    ClientLogger.debug('[FIND] Found Client Address: %o', {
-      uuid,
-      address: item.item,
+    ClientLogger.debug('[LOGOUT] Logout: %o', {
+      clientUuid,
     });
 
-    return item;
+    return 'success';
   }
 }
