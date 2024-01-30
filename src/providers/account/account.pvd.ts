@@ -54,7 +54,7 @@ export class ClientProvider {
       }
 
       ClientLogger.info('[LOGIN] Login Success');
-      this.accountManager.setItem(uuid, email);
+      this.accountManager.setLoginUser(uuid, email);
 
       ClientLogger.debug('[LOGIN] Set Item Finished: %o', {
         uuid,
