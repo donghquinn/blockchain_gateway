@@ -20,7 +20,7 @@ export class AccountManager {
   }
 
   public searchKey(clientUuid: string) {
-    ClientLogger.debug('[LOGIN] Client Map: %o', {
+    ClientLogger.debug('[MANAGER] Client Map: %o', {
       map: this.clientMap,
     });
 
@@ -49,7 +49,7 @@ export class AccountManager {
         clearInterval(timer);
       }
 
-      ClientLogger.debug('[LOGIN] As User Signed in for 10 minutes, Proceed Delete Login Map');
+      ClientLogger.debug('[MANAGER] As User Signed in for 10 minutes, Proceed Delete Login Map');
 
         this.deleteItem( uuid );
         
@@ -60,7 +60,7 @@ export class AccountManager {
   public deleteItem(uuid: string) {
     const isExist = this.searchKey(uuid);
 
-    if (!isExist) throw new ClientError('[LOGIN] Search Logined Client', 'Not Found Logined Client. Reject.');
+    if (!isExist) throw new ClientError('[MANAGER] Search Logined Client', 'Not Found Logined Client. Reject.');
 
     this.clientMap.delete({ key: uuid });
   }
@@ -68,9 +68,9 @@ export class AccountManager {
   public findItem(clientUuid: string) {
     const item = this.clientMap.get({ key: clientUuid });
 
-    if (!item) throw new ClientError('[LOGIN] Search Logined Client', 'Not Found Logined Client. Reject.');
+    if (!item) throw new ClientError('[MANAGER] Search Logined Client', 'Not Found Logined Client. Reject.');
 
-    ClientLogger.debug('[FIND] Found Client Address: %o', {
+    ClientLogger.debug('[MANAGER] Found Client Address: %o', {
       clientUuid,
       address: item.item,
     });
