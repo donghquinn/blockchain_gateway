@@ -147,14 +147,14 @@ export class AccountManager {
     const foundIndex = this.findIndexKeyFromList(uuid);
 
     if (foundIndex > -1) {
+      this.keyList.slice(foundIndex, 1);
+
       ManagerLogger.debug('[ACCOUNT] Item Deleted: %o', {
         key: uuid,
         foundIndex,
         map: this.clientMap,
         keyList: this.keyList,
       });
-
-      this.keyList.slice(foundIndex, 1);
       // this.clientMap.delete({key: uuid});
 
       return uuid;
