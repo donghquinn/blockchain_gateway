@@ -16,14 +16,24 @@ export class AccountManager {
 
   public userLogin(uuid: string, email: string) {
     const key = { key: uuid };
+
+    const foundKey = this.keyList.find((item) => item === key);
+
+    if (foundKey !== undefined) {
+      ManagerLogger.info('[MANAGER] Key is found from Key List. Ignore.');
+
+      return null;
+    }
+
     const foundItem = this.findItem(key);
 
-    if (foundItem === undefined) {
-      ManagerLogger.debug('[LOGIN] User Login Item is not found: %o', {
+    if (foundItem !== null) {
+      ManagerLogger.debug('[LOGIN] User Login Item is found. Ignore: %o', {
         uuid,
         email,
         foundItem,
       });
+      ManagerLogger.info('[MANAGER] Item is found. Ignore.');
 
       return null;
     }
@@ -65,18 +75,10 @@ export class AccountManager {
   }
 
   public findItem(key: LoginedClientKey): LoginedClientItem | null {
-    const foundItem = this.keyList.find((item) => item === key);
-
-    if (foundItem === undefined) {
-      ManagerLogger.info('[MANAGER] No Key is not found froun Key List. Ignore.');
-
-      return null;
-    }
-
     const emailItem = this.clientMap.get(key);
 
     if (emailItem === undefined) {
-      ManagerLogger.info('[MANAGER] No Item Found. Ignore.');
+      ManagerLogger.info('[MANAGER] No Item Found.');
 
       return null;
     }
@@ -85,10 +87,17 @@ export class AccountManager {
   }
 
   public deleteItem(uuid: string) {
-    const foundIndex = this.keyList.findIndex((item) => item.key === uuid);
+    const key: LoginedClientKey = { key: uuid };
+    const foundIndex = this.keyList.findIndex((item) => item === key);
 
     if (foundIndex > -1) this.keyList.slice(foundIndex, 1);
 
-    this.clientMap.delete({ key: uuid });
+    this.clientMap.delete(key);
+
+    ManagerLogger.debug('[ACCOUNT] Item Deleted: %o', {
+      key: uuid,
+      foundIndex,
+      map: this.clientMap,
+    });
   }
 }
