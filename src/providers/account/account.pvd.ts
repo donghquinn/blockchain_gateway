@@ -76,7 +76,7 @@ export class ClientProvider {
 
   async createAccount(clientUuid: string) {
     try {
-      const userItem = this.accountManager.findItem({ key: clientUuid });
+      const userItem = this.accountManager.findItem(clientUuid);
 
       if (userItem === null) {
         ClientLogger.debug('[ACCOUNT] No Logined User: %o', {
@@ -114,18 +114,19 @@ export class ClientProvider {
 
   async getClientBalance(clientUuid: string) {
     try {
-      const userItem = this.accountManager.findItem({ key: clientUuid });
+      const userItem = this.accountManager.findItem(clientUuid);
 
       if (userItem === null) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
 
-      const balance = await this.client.getBalance(userItem.item);
+      const address = await this.prisma.selectAddress(clientUuid)
+      const balance = await this.client.getBalance(address);
 
       ClientLogger.debug('[BALANCE] Got Balance: %o', {
         userItem,
         balance,
       });
 
-      return balance;
+      return balance.toString();
     } catch (error) {
       ClientLogger.error('[BALANCE] Get Balance Error: %o', {
         error,

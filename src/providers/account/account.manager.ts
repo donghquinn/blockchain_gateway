@@ -25,7 +25,7 @@ export class AccountManager {
       return null;
     }
 
-    const foundItem = this.findItem(key);
+    const foundItem = this.findItem(uuid);
 
     if (foundItem !== null) {
       ManagerLogger.debug('[LOGIN] User Login Item is found. Ignore: %o', {
@@ -56,7 +56,7 @@ export class AccountManager {
     const interval = 1000 * 60 * 10;
 
     const timer = setInterval(() => {
-      const item = this.findItem(key);
+      const item = this.findItem(uuid);
 
       if (item === undefined) {
         ManagerLogger.debug('[MANAGER] No User Found during 10minutes. Ignore: %o', {
@@ -115,8 +115,13 @@ export class AccountManager {
     return email;
   }
 
-  public findItem(key: LoginedClientKey): LoginedClientItem | null {
-    const emailItem = this.clientMap.get({ key: key.key });
+  public findItem ( uuid: string ): LoginedClientItem | null
+  {
+    const key = this.keyList.find( ( item ) => item.key === uuid );
+
+    if ( !key ) return null;
+
+    const emailItem = this.clientMap.get(key);
 
     if (emailItem === undefined) {
       ManagerLogger.debug('[MANAGER] No Item Found: %o', {
