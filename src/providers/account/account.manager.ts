@@ -1,9 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { ManagerLogger } from '@utils/logger.util';
 import { LoginedClientItem, LoginedClientKey } from 'types/account/client.type';
 
+@Injectable()
 export class AccountManager {
-  private static instance: AccountManager;
-
   private keyList: Array<LoginedClientKey>;
 
   private clientMap: WeakMap<LoginedClientKey, LoginedClientItem>;
@@ -11,14 +11,6 @@ export class AccountManager {
   constructor() {
     this.keyList = [];
     this.clientMap = new WeakMap();
-  }
-
-  public static getInstance() {
-    if (!this.instance) {
-      this.instance = new AccountManager();
-    }
-
-    return this.instance;
   }
 
   public setLoginUser(uuid: string, email: string) {
@@ -91,7 +83,8 @@ export class AccountManager {
 
     if (isExist === null) {
       ManagerLogger.info('[MANAGER] Search Logined Client Not Found Logined Client. Reject.');
-      return;
+
+      return null;
     }
 
     const index = this.keyList.findIndex((item) => item.key === uuid);
@@ -104,6 +97,8 @@ export class AccountManager {
       keyList: this.keyList,
       map: this.clientMap,
     });
+
+    return uuid;
   }
 
   public findItem(clientUuid: string): LoginedClientItem | null {

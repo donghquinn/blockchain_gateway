@@ -1,22 +1,21 @@
 import { ClientError } from '@errors/client.error';
-import { AccountManager } from '@libraries/account/account.manager';
 import { cryptPassword, cryptPrivateKey } from '@libraries/crypto/crypto.lib';
 import { comparePassword } from '@libraries/crypto/decrypt.lib';
 import { Injectable } from '@nestjs/common';
 import { ClientLogger } from '@utils/logger.util';
 import { Web3Client } from 'providers/ethereum/web3.pvd';
 import { AccountPrismaLibrary } from './account-prisma.pvd';
+import { AccountManager } from './account.manager';
 
 @Injectable()
 export class ClientProvider {
-  private accountManager: AccountManager;
+  // private accountManager: AccountManager;
 
   constructor(
     private readonly prisma: AccountPrismaLibrary,
     private readonly client: Web3Client,
-  ) {
-    this.accountManager = AccountManager.getInstance();
-  }
+    private readonly accountManager: AccountManager,
+  ) {}
 
   async createClient(email: string, password: string) {
     try {
@@ -142,7 +141,16 @@ export class ClientProvider {
   }
 
   logout(clientUuid: string) {
-    this.accountManager.deleteItem(clientUuid);
+    const result = this.accountManager.deleteItem(clientUuid);
+
+    if (result === null) {
+      ClientLogger.debug('[LOGOUT] Not Found Key. Ignore: %o', {
+        clientUuid,
+        result,
+      });
+
+      throw new ClientError('[LOGOUT] Delete Logined User', 'No User Found. Ignore');
+    }
 
     ClientLogger.debug('[LOGOUT] Logout: %o', {
       clientUuid,
