@@ -26,6 +26,8 @@ class WinstonLogger {
 
   private prismaLogger: Winston.Logger;
 
+  private blockchainLogger: Winston.Logger;
+
   private constructor() {
     this.prismaLogger = Winston.createLogger({
       level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
@@ -36,6 +38,21 @@ class WinstonLogger {
           datePattern: 'YYYY-MM-DD',
           dirname: dirSaveName,
           filename: '%DATE%.prisma.log',
+          maxFiles: 30,
+          zippedArchive: true,
+        }),
+      ],
+    });
+
+    this.blockchainLogger = Winston.createLogger({
+      level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+      format: combine(splat(), json(), colorize(), defaultTimestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), formatted),
+      transports: [
+        new Winston.transports.Console(),
+        new WinstonDaily({
+          datePattern: 'YYYY-MM-DD',
+          dirname: dirSaveName,
+          filename: '%DATE%.blockchain.log',
           maxFiles: 30,
           zippedArchive: true,
         }),
@@ -123,8 +140,10 @@ class WinstonLogger {
       ClientLogger: this.instance.clientLogger,
       ManagerLogger: this.instance.managerLogger,
       PrismaLogger: this.instance.prismaLogger,
+      BlockchainLogger: this.instance.blockchainLogger,
     };
   }
 }
 
-export const { Logger, TransactionLogger, ClientLogger, ManagerLogger, PrismaLogger } = WinstonLogger.getInstance();
+export const { Logger, TransactionLogger, ClientLogger, ManagerLogger, PrismaLogger, BlockchainLogger } =
+  WinstonLogger.getInstance();

@@ -1,13 +1,15 @@
-import { ManagerError } from '@errors/manager.error';
 import { ManagerLogger } from '@utils/logger.util';
 import { LoginedClientItem, LoginedClientKey } from 'types/account/client.type';
 
 export class AccountManager {
   private static instance: AccountManager;
 
+  private keyList: Array<LoginedClientKey>;
+
   private clientMap: WeakMap<LoginedClientKey, LoginedClientItem>;
 
   constructor() {
+    this.keyList = [];
     this.clientMap = new WeakMap();
   }
 
@@ -26,9 +28,9 @@ export class AccountManager {
       userMap: this.clientMap,
     });
 
-    const isLogined = this.searchKey(uuid);
+    const userItem = this.findItem(uuid);
 
-    if (isLogined) {
+    if (userItem === null) {
       ManagerLogger.info('[CLIENT] Found Already Logined User Info. Ignore');
 
       return;
@@ -45,9 +47,9 @@ export class AccountManager {
         userMap: this.clientMap,
       });
 
-      const isExsit = this.searchKey(uuid);
+      const isExsit = this.findItem(uuid);
 
-      if (!isExsit) {
+      if (isExsit === null) {
         ManagerLogger.info('[CLIENT] It is not existing user. Clear Interval.');
 
         clearInterval(timer);
@@ -59,15 +61,19 @@ export class AccountManager {
     }, interval);
   }
 
-  public searchKey(clientUuid: string) {
-    ManagerLogger.debug('[MANAGER] Client Map: %o', {
-      map: this.clientMap,
-    });
+  // public searchKey(clientUuid: string) {
+  //   const isExist = this.clientMap.get({ key: clientUuid });
 
-    return this.clientMap.has({ key: clientUuid });
-  }
+  //   ManagerLogger.debug('[MANAGER] Client Map: %o', {
+  //     map: this.clientMap,
+  //     isExist,
+  //   });
+
+  //   return isExist;
+  // }
 
   public setItem(uuid: string, email: string) {
+    this.keyList.push({ key: uuid });
     this.clientMap.set({ key: uuid }, { item: email });
 
     ManagerLogger.debug('[MANAGER] Set Client Map Finsihed: %o', {
@@ -79,35 +85,52 @@ export class AccountManager {
     ManagerLogger.debug('[MANAGER] Start Delete Client Map Finsihed: %o', {
       uuid,
       map: this.clientMap,
-    } );
-      
-    const isExist = this.searchKey(uuid);
+    });
 
-    if (!isExist) {
+    const isExist = this.findItem(uuid);
+
+    if (isExist === null) {
       ManagerLogger.info('[MANAGER] Search Logined Client Not Found Logined Client. Reject.');
       return;
     }
 
+    const index = this.keyList.findIndex((item) => item.key === uuid);
+
+    if (index > -1) this.keyList.splice(index, 1);
+
     this.clientMap.delete({ key: uuid });
 
     ManagerLogger.debug('[MANAGER] Delete Client Map Finsihed: %o', {
+      keyList: this.keyList,
       map: this.clientMap,
     });
   }
 
-  public findItem(clientUuid: string) {
-    const item = this.clientMap.get({ key: clientUuid });
+  public findItem(clientUuid: string): LoginedClientItem | null {
+    const key = this.keyList.find((item) => item.key === clientUuid);
+
+    if (!key) {
+      ManagerLogger.debug('[MANAGER] Key is not found: %o', {
+        keyList: this.keyList,
+        clientUuid,
+        key,
+      });
+
+      return null;
+    }
+    const item = this.clientMap.get(key);
 
     ManagerLogger.debug('[MANAGER] Start to Search User Map: %o', {
       clientUuid,
       item,
+      keyList: this.keyList,
       map: this.clientMap,
     });
 
-    if (!item) {
+    if (item === undefined) {
       ManagerLogger.info('[MANAGER] Search Logined Client Not Found Logined Client. Reject.');
 
-      throw new ManagerError('[FIND] Find Item', 'No Item Found. Reject');
+      return null;
     }
 
     ManagerLogger.debug('[MANAGER] Found Client Address: %o', {

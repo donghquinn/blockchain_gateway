@@ -1,22 +1,20 @@
 import { ClientError } from '@errors/client.error';
-import { AccountManager } from '@libraries/account/account.manager';
 import { cryptPassword, cryptPrivateKey } from '@libraries/crypto/crypto.lib';
 import { comparePassword } from '@libraries/crypto/decrypt.lib';
 import { Injectable } from '@nestjs/common';
 import { ClientLogger } from '@utils/logger.util';
 import { Web3Client } from 'providers/ethereum/web3.pvd';
 import { AccountPrismaLibrary } from './account-prisma.pvd';
+import { AccountManager } from './account.manager';
 
 @Injectable()
 export class ClientProvider {
-  private accountManager: AccountManager;
-
+  // private accountManager: AccountManager;
   constructor(
     private readonly prisma: AccountPrismaLibrary,
     private readonly client: Web3Client,
-  ) {
-    this.accountManager = AccountManager.getInstance();
-  }
+    private readonly accountManager: AccountManager,
+  ) {}
 
   async createClient(email: string, password: string) {
     try {
@@ -54,7 +52,8 @@ export class ClientProvider {
       }
 
       ClientLogger.info('[LOGIN] Login Success');
-      this.accountManager.setLoginUser(uuid, email);
+
+      this.accountManager.userLogin(uuid, email);
 
       ClientLogger.debug('[LOGIN] Set Item Finished: %o', {
         uuid,
@@ -77,10 +76,21 @@ export class ClientProvider {
 
   async createAccount(clientUuid: string) {
     try {
-      const isExist = this.accountManager.searchKey(clientUuid);
+      const userItem = this.accountManager.findItem({ key: clientUuid });
 
-      if (!isExist)
+      if (userItem === null) {
+        ClientLogger.debug('[ACCOUNT] No Logined User: %o', {
+          clientUuid,
+          userItem,
+        });
+
         throw new ClientError('[ACCOUNT] Create Account', 'User is Not Logined. Please Login and Try Again.');
+      }
+
+      ClientLogger.debug('[ACCOUNT] Found Logined User: %o', {
+        clientUuid,
+        userItem,
+      });
 
       const { address, privateKey } = this.client.createAccount();
 
@@ -104,16 +114,14 @@ export class ClientProvider {
 
   async getClientBalance(clientUuid: string) {
     try {
-      const isExist = this.accountManager.searchKey(clientUuid);
+      const userItem = this.accountManager.findItem({ key: clientUuid });
 
-      if (!isExist) throw new ClientError('[BALANCE] Get Balance', 'User is Not Logined. Reject Reqeust.');
+      if (userItem === undefined) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
 
-      const address = this.accountManager.findItem(clientUuid);
-
-      const balance = await this.client.getBalance(address.item);
+      const balance = await this.client.getBalance(userItem.item);
 
       ClientLogger.debug('[BALANCE] Got Balance: %o', {
-        address,
+        userItem,
         balance,
       });
 
@@ -132,7 +140,16 @@ export class ClientProvider {
   }
 
   logout(clientUuid: string) {
-    this.accountManager.deleteItem(clientUuid);
+    const result = this.accountManager.deleteItem(clientUuid);
+
+    if (result === null) {
+      ClientLogger.debug('[LOGOUT] Not Found Key. Ignore: %o', {
+        clientUuid,
+        result,
+      });
+
+      throw new ClientError('[LOGOUT] Delete Logined User', 'No User Found. Ignore');
+    }
 
     ClientLogger.debug('[LOGOUT] Logout: %o', {
       clientUuid,
