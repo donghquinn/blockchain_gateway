@@ -4,7 +4,7 @@ import { ManagerLogger } from '@utils/logger.util';
 import { LoginedClientItem, LoginedClientKey } from 'types/account/client.type';
 
 @Injectable()
-export class AccountManager {
+export class ClientManager {
   private keyList: Array<LoginedClientKey>;
 
   private clientMap: WeakMap<LoginedClientKey, LoginedClientItem>;

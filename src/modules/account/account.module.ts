@@ -1,13 +1,13 @@
-import { ClientController } from '@controllers/account/account.ctl';
+import { AccountController } from '@controllers/account/account.ctl';
+import { AccountPrismaModule } from '@modules/account.module';
+import { ManagerModule } from '@modules/manager/manager.module';
 import { Module } from '@nestjs/common';
-import { ClientProvider } from 'providers/account/account.pvd';
+import { AccountProvider } from '@providers/account/account.pvd';
 import { Web3Module } from '../web3.module';
-import { AccountPrismaModule } from './account-prisma.module';
-import { AccountManagerModule } from './account-manager.module';
 
 @Module({
-  providers: [ClientProvider],
-  controllers: [ClientController],
-  imports: [AccountPrismaModule, Web3Module, AccountManagerModule],
+  providers: [AccountProvider],
+  controllers: [AccountController],
+  imports: [AccountPrismaModule, Web3Module, ManagerModule],
 })
-export class ClientModule {}
+export class AccountModule {}

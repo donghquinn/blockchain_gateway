@@ -1,60 +1,16 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import {
-  accountListRequestValidator,
-  balanceRequestValidator,
-  loginRequestValidator,
-  logoutRequestValidator,
-} from '@validators/account/client.validator';
-import { createAccountValidator, createClienttValidator } from '@validators/account/create.validator';
+import { accountListRequestValidator, balanceRequestValidator } from '@validators/account/client.validator';
+import { createAccountValidator } from '@validators/account/create.validator';
 import { setErrorResponse, setResponse } from 'dto/response.dto';
-import { ClientProvider } from 'providers/account/account.pvd';
-import { BalanceClientRequest, LoginClientRequest, LogoutClientRequest } from 'types/account/client.type';
-import { CreateAccountRequest, CreateClientRequest } from 'types/account/create.type';
+import { AccountProvider } from 'providers/account/account.pvd';
+import { AccountListRequest, BalanceClientRequest } from 'types/account/client.type';
+import { CreateAccountRequest } from 'types/account/create.type';
 
-@Controller('client')
-export class ClientController {
-  constructor(private readonly account: ClientProvider) {}
+@Controller('account')
+export class AccountController {
+  constructor(private readonly account: AccountProvider) {}
 
-  @Post('signup')
-  async createClient(@Body() request: CreateClientRequest) {
-    try {
-      const { email, password } = await createClienttValidator(request);
-
-      const result = await this.account.createClient(email, password);
-
-      return setResponse(200, { result });
-    } catch (error) {
-      return setErrorResponse(error);
-    }
-  }
-
-  @Post('login')
-  async loginContoller(@Body() request: LoginClientRequest) {
-    try {
-      const { email, password } = await loginRequestValidator(request);
-
-      const uuid = await this.account.login(email, password);
-
-      return setResponse(200, { uuid });
-    } catch (error) {
-      return setErrorResponse(error);
-    }
-  }
-
-  @Post('logout')
-  async logoutContoller(@Body() request: LogoutClientRequest) {
-    try {
-      const { uuid } = await logoutRequestValidator(request);
-
-      const message = this.account.logout(uuid);
-
-      return setResponse(200, { message });
-    } catch (error) {
-      return setErrorResponse(error);
-    }
-  }
-
-  @Post('account/create')
+  @Post('create')
   async createAccount(@Body() request: CreateAccountRequest) {
     try {
       const { uuid } = await createAccountValidator(request);
@@ -67,8 +23,8 @@ export class ClientController {
     }
   }
 
-  @Post('account/list')
-  async accountListController(@Body() request: BalanceClientRequest) {
+  @Post('list')
+  async accountListController(@Body() request: AccountListRequest) {
     try {
       const { uuid } = await accountListRequestValidator(request);
 
@@ -80,7 +36,7 @@ export class ClientController {
     }
   }
 
-  @Post('account/balance')
+  @Post('balance')
   async balanceController(@Body() request: BalanceClientRequest) {
     try {
       const { uuid, address } = await balanceRequestValidator(request);
