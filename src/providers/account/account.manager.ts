@@ -17,7 +17,7 @@ export class AccountManager {
   public userLogin(uuid: string, email: string) {
     const key = { key: uuid };
 
-    const foundKey = this.keyList.find((item) => item === key);
+    const foundKey = this.findKeyFromList(uuid);
 
     if (foundKey !== undefined) {
       ManagerLogger.info('[MANAGER] Key is found from Key List. Ignore.');
@@ -33,12 +33,25 @@ export class AccountManager {
         email,
         foundItem,
       });
+
       ManagerLogger.info('[MANAGER] Item is found. Ignore.');
 
       return null;
     }
 
-    this.setItem(key, email);
+    const isSuccess = this.setItem(key, email);
+
+    if (isSuccess === null) {
+      ManagerLogger.debug('[MANGER] Found Already Logined Item. Ignore: %o', {
+        foundItem,
+        email,
+        key,
+        keyList: this.keyList,
+        map: this.clientMap,
+      });
+
+      return null;
+    }
 
     const interval = 1000 * 60 * 10;
 
@@ -64,7 +77,33 @@ export class AccountManager {
     return uuid;
   }
 
+  public findIndexKeyFromList(uuid: string) {
+    const foundKey = this.keyList.findIndex((item) => item.key === uuid);
+
+    return foundKey;
+  }
+
+  public findKeyFromList(uuid: string) {
+    const foundKey = this.keyList.find((item) => item.key === uuid);
+
+    return foundKey;
+  }
+
   public setItem(key: LoginedClientKey, email: string) {
+    const foundItem = this.keyList.findIndex((item) => item.key === key.key);
+
+    if (foundItem > -1) {
+      ManagerLogger.debug('[MANGER] Found Already Logined Item. Ignore: %o', {
+        foundItem,
+        email,
+        key,
+        keyList: this.keyList,
+        map: this.clientMap,
+      });
+
+      return null;
+    }
+
     this.keyList.push(key);
     this.clientMap.set(key, { item: email });
 
@@ -72,32 +111,58 @@ export class AccountManager {
       keyList: this.keyList,
       clientMap: this.clientMap,
     });
+
+    return email;
   }
 
   public findItem(key: LoginedClientKey): LoginedClientItem | null {
-    const emailItem = this.clientMap.get(key);
+    const emailItem = this.clientMap.get({ key: key.key });
 
     if (emailItem === undefined) {
+      ManagerLogger.debug('[MANAGER] No Item Found: %o', {
+        key,
+        list: this.keyList,
+        map: this.clientMap,
+      });
+
       ManagerLogger.info('[MANAGER] No Item Found.');
 
       return null;
     }
 
+    ManagerLogger.debug('[MANAGER] Found Item: %o', {
+      key,
+      list: this.keyList,
+      emailItem,
+    });
+
     return emailItem;
   }
 
-  public deleteItem(uuid: string) {
-    const key: LoginedClientKey = { key: uuid };
-    const foundIndex = this.keyList.findIndex((item) => item === key);
+  public deleteItem(uuid: string): string | null {
+    const foundIndex = this.findIndexKeyFromList(uuid);
 
-    if (foundIndex > -1) this.keyList.slice(foundIndex, 1);
+    if (foundIndex > -1) {
+      ManagerLogger.debug('[ACCOUNT] Item Deleted: %o', {
+        key: uuid,
+        foundIndex,
+        map: this.clientMap,
+        keyList: this.keyList,
+      });
 
-    this.clientMap.delete(key);
+      this.keyList.slice(foundIndex, 1);
+      // this.clientMap.delete({key: uuid});
 
-    ManagerLogger.debug('[ACCOUNT] Item Deleted: %o', {
-      key: uuid,
+      return uuid;
+    }
+
+    ManagerLogger.debug('[MANAGER] No Item Found: %o', {
+      uuid,
       foundIndex,
       map: this.clientMap,
+      keyList: this.keyList,
     });
+
+    return null;
   }
 }
