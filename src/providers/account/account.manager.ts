@@ -5,18 +5,16 @@ import { LoginedClientItem, LoginedClientKey } from 'types/account/client.type';
 
 @Injectable()
 export class AccountManager {
-  private clientMap: WeakMap<LoginedClientKey, LoginedClientItem>;
-
   private keyList: Array<LoginedClientKey>;
 
+  private clientMap: WeakMap<LoginedClientKey, LoginedClientItem>;
+
   constructor() {
-    this.clientMap = new WeakMap<LoginedClientKey, LoginedClientItem>();
     this.keyList = [];
+    this.clientMap = new WeakMap<LoginedClientKey, LoginedClientItem>();
   }
 
   public userLogin(uuid: string, email: string) {
-    const key = { key: uuid };
-
     const foundKey = this.findKeyFromList(uuid);
 
     if (foundKey !== undefined) {
@@ -39,13 +37,13 @@ export class AccountManager {
       return null;
     }
 
-    const isSuccess = this.setItem(key, email);
+    const isSuccess = this.setItem(uuid, email);
 
     if (isSuccess === null) {
       ManagerLogger.debug('[MANGER] Found Already Logined Item. Ignore: %o', {
         foundItem,
+        uuid,
         email,
-        key,
         keyList: this.keyList,
         map: this.clientMap,
       });
@@ -89,14 +87,14 @@ export class AccountManager {
     return foundKey;
   }
 
-  public setItem(key: LoginedClientKey, email: string) {
-    const foundItem = this.keyList.findIndex((item) => item.key === key.key);
+  public setItem(uuid: string, email: string) {
+    const foundItem = this.keyList.findIndex((item) => item.key === uuid);
 
     if (foundItem > -1) {
       ManagerLogger.debug('[MANGER] Found Already Logined Item. Ignore: %o', {
         foundItem,
         email,
-        key,
+        uuid,
         keyList: this.keyList,
         map: this.clientMap,
       });
@@ -104,6 +102,7 @@ export class AccountManager {
       return null;
     }
 
+    const key = { key: uuid };
     this.keyList.push(key);
     this.clientMap.set(key, { item: email });
 
