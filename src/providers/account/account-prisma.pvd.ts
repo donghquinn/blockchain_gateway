@@ -85,14 +85,14 @@ export class AccountPrismaLibrary extends PrismaClient {
     }
   }
 
-    async selectAddress(uuid: string) {
+  async selectAddress(uuid: string) {
     try {
       const result = await this.account.findFirst({
         select: {
-          address: true
+          address: true,
         },
         where: {
-          clientUuid: uuid
+          clientUuid: uuid,
         },
       });
 

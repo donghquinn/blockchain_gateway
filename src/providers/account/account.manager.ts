@@ -78,9 +78,9 @@ export class AccountManager {
   }
 
   public findIndexKeyFromList(uuid: string) {
-    const foundKey = this.keyList.findIndex((item) => item.key === uuid);
+    const foundIndex = this.keyList.findIndex((item) => item.key === uuid);
 
-    return foundKey;
+    return foundIndex;
   }
 
   public findKeyFromList(uuid: string) {
@@ -115,11 +115,10 @@ export class AccountManager {
     return email;
   }
 
-  public findItem ( uuid: string ): LoginedClientItem | null
-  {
-    const key = this.keyList.find( ( item ) => item.key === uuid );
+  public findItem(uuid: string): LoginedClientItem | null {
+    const key = this.keyList.find((item) => item.key === uuid);
 
-    if ( !key ) return null;
+    if (!key) return null;
 
     const emailItem = this.clientMap.get(key);
 

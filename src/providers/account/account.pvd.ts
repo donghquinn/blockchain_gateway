@@ -74,6 +74,25 @@ export class ClientProvider {
     }
   }
 
+  logout(clientUuid: string) {
+    const result = this.accountManager.deleteItem(clientUuid);
+
+    if (result === null) {
+      ClientLogger.debug('[LOGOUT] Not Found Key. Ignore: %o', {
+        clientUuid,
+        result,
+      });
+
+      throw new ClientError('[LOGOUT] Delete Logined User', 'No User Found. Ignore');
+    }
+
+    ClientLogger.debug('[LOGOUT] Logout: %o', {
+      clientUuid,
+    });
+
+    return 'success';
+  }
+
   async createAccount(clientUuid: string) {
     try {
       const userItem = this.accountManager.findItem(clientUuid);
@@ -118,7 +137,7 @@ export class ClientProvider {
 
       if (userItem === null) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
 
-      const address = await this.prisma.selectAddress(clientUuid)
+      const address = await this.prisma.selectAddress(clientUuid);
       const balance = await this.client.getBalance(address);
 
       ClientLogger.debug('[BALANCE] Got Balance: %o', {
@@ -138,24 +157,5 @@ export class ClientProvider {
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }
-  }
-
-  logout(clientUuid: string) {
-    const result = this.accountManager.deleteItem(clientUuid);
-
-    if (result === null) {
-      ClientLogger.debug('[LOGOUT] Not Found Key. Ignore: %o', {
-        clientUuid,
-        result,
-      });
-
-      throw new ClientError('[LOGOUT] Delete Logined User', 'No User Found. Ignore');
-    }
-
-    ClientLogger.debug('[LOGOUT] Logout: %o', {
-      clientUuid,
-    });
-
-    return 'success';
   }
 }
