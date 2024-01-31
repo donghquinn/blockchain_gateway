@@ -57,6 +57,11 @@ export class AccountPrismaLibrary extends PrismaClient {
           uuid: true,
           password: true,
           passwordToken: true,
+          account: {
+            select: {
+              address: true,
+            },
+          },
         },
         where: {
           email,
@@ -111,6 +116,37 @@ export class AccountPrismaLibrary extends PrismaClient {
       throw new PrismaError(
         '[ADDRESS] Bring Address',
         'Bring Address Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  async selectAddressList(uuid: string) {
+    try {
+      const result = await this.account.findMany({
+        select: {
+          address: true,
+        },
+        where: {
+          clientUuid: uuid,
+        },
+      });
+
+      if (result.length === 0) {
+        PrismaLogger.error('[ADDRESS] No Matching Account List Found');
+
+        throw new PrismaError('[ADDRESS] Bring Address List', 'No Matching Address List Found. Please Try Again.');
+      }
+
+      return result;
+    } catch (error) {
+      PrismaLogger.error('[ADDRESS] Bring Address List Error: %o', {
+        error,
+      });
+
+      throw new PrismaError(
+        '[ADDRESS] Bring Address List',
+        'Bring Address List Error. Please Try Again.',
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }

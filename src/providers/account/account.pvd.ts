@@ -131,13 +131,12 @@ export class ClientProvider {
     }
   }
 
-  async getClientBalance(clientUuid: string) {
+  async getClientBalance(clientUuid: string, address: string) {
     try {
       const userItem = this.accountManager.findItem(clientUuid);
 
       if (userItem === null) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
 
-      const address = await this.prisma.selectAddress(clientUuid);
       const balance = await this.client.getBalance(address);
 
       ClientLogger.debug('[BALANCE] Got Balance: %o', {
@@ -154,6 +153,33 @@ export class ClientProvider {
       throw new ClientError(
         '[BALANCE] Get Balance',
         'Get Balance Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
+  async getAccountList(clientUuid: string) {
+    try {
+      const userItem = this.accountManager.findItem(clientUuid);
+
+      if (userItem === null) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
+
+      const address = await this.prisma.selectAddressList(clientUuid);
+
+      ClientLogger.debug('[BALANCE] Got Address List: %o', {
+        userItem,
+        address,
+      });
+
+      return address;
+    } catch (error) {
+      ClientLogger.error('[BALANCE] Get Address List Error: %o', {
+        error,
+      });
+
+      throw new ClientError(
+        '[BALANCE] Address List',
+        'Address List Error. Please Try Again.',
         error instanceof Error ? error : new Error(JSON.stringify(error)),
       );
     }

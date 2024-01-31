@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import {
+  accountListRequestValidator,
   balanceRequestValidator,
   loginRequestValidator,
   logoutRequestValidator,
@@ -66,12 +67,25 @@ export class ClientController {
     }
   }
 
+  @Post('account/list')
+  async accountListController(@Body() request: BalanceClientRequest) {
+    try {
+      const { uuid } = await accountListRequestValidator(request);
+
+      const result = await this.account.getAccountList(uuid);
+
+      return setResponse(200, { result });
+    } catch (error) {
+      return setErrorResponse(error);
+    }
+  }
+
   @Post('account/balance')
   async balanceController(@Body() request: BalanceClientRequest) {
     try {
-      const { uuid } = await balanceRequestValidator(request);
+      const { uuid, address } = await balanceRequestValidator(request);
 
-      const balance = await this.account.getClientBalance(uuid);
+      const balance = await this.account.getClientBalance(uuid, address);
 
       return setResponse(200, { balance });
     } catch (error) {

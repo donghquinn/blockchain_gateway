@@ -9,6 +9,7 @@ export interface LogoutClientRequest {
 
 export interface BalanceClientRequest {
   uuid: string;
+  address: string;
 }
 
 export interface LoginedClientKey {
@@ -17,4 +18,9 @@ export interface LoginedClientKey {
 
 export interface LoginedClientItem {
   item: string;
+  address?: string;
+}
+
+export interface AccountListRequest {
+  uuid: string;
 }
