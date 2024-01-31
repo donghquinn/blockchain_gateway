@@ -78,19 +78,20 @@ export class ClientProvider {
 
   async createAccount(clientUuid: string) {
     try {
-      const isExist = this.accountManager.searchKey(clientUuid);
+      const userItem = this.accountManager.findItem(clientUuid);
 
-      if (!isExist) {
+      if (userItem === null) {
         ClientLogger.debug('[ACCOUNT] No Logined User: %o', {
           clientUuid,
-          isExist,
+          userItem,
         });
+
         throw new ClientError('[ACCOUNT] Create Account', 'User is Not Logined. Please Login and Try Again.');
       }
 
       ClientLogger.debug('[ACCOUNT] Found Logined User: %o', {
         clientUuid,
-        isExist,
+        userItem,
       });
 
       const { address, privateKey } = this.client.createAccount();
@@ -115,16 +116,14 @@ export class ClientProvider {
 
   async getClientBalance(clientUuid: string) {
     try {
-      const isExist = this.accountManager.searchKey(clientUuid);
+      const userItem = this.accountManager.findItem(clientUuid);
 
-      if (!isExist) throw new ClientError('[BALANCE] Get Balance', 'User is Not Logined. Reject Reqeust.');
+      if (userItem === null) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
 
-      const address = this.accountManager.findItem(clientUuid);
-
-      const balance = await this.client.getBalance(address.item);
+      const balance = await this.client.getBalance(userItem.item);
 
       ClientLogger.debug('[BALANCE] Got Balance: %o', {
-        address,
+        userItem,
         balance,
       });
 
