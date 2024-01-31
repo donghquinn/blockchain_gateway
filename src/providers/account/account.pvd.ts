@@ -54,6 +54,7 @@ export class ClientProvider {
       }
 
       ClientLogger.info('[LOGIN] Login Success');
+
       this.accountManager.setLoginUser(uuid, email);
 
       ClientLogger.debug('[LOGIN] Set Item Finished: %o', {
@@ -79,8 +80,18 @@ export class ClientProvider {
     try {
       const isExist = this.accountManager.searchKey(clientUuid);
 
-      if (!isExist)
+      if (!isExist) {
+        ClientLogger.debug('[ACCOUNT] No Logined User: %o', {
+          clientUuid,
+          isExist,
+        });
         throw new ClientError('[ACCOUNT] Create Account', 'User is Not Logined. Please Login and Try Again.');
+      }
+
+      ClientLogger.debug('[ACCOUNT] Found Logined User: %o', {
+        clientUuid,
+        isExist,
+      });
 
       const { address, privateKey } = this.client.createAccount();
 

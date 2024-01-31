@@ -79,8 +79,8 @@ export class AccountManager {
     ManagerLogger.debug('[MANAGER] Start Delete Client Map Finsihed: %o', {
       uuid,
       map: this.clientMap,
-    } );
-      
+    });
+
     const isExist = this.searchKey(uuid);
 
     if (!isExist) {

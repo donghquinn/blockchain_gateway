@@ -1,5 +1,6 @@
 import { Web3Error } from '@errors/web3.error';
 import { Injectable } from '@nestjs/common';
+import { BlockchainLogger } from '@utils/logger.util';
 import { SignedTransaction } from 'types/transaction/transaction.type';
 import Web3, { Transaction } from 'web3';
 
@@ -22,6 +23,10 @@ export class Web3Client {
   public createAccount() {
     try {
       const accountInfo = this.client.eth.accounts.create();
+
+      BlockchainLogger.debug('[ACCOUNT] Create Account: %o', {
+        accountInfo,
+      });
 
       return accountInfo;
     } catch (error) {
