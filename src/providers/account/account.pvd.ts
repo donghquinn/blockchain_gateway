@@ -116,7 +116,7 @@ export class ClientProvider {
     try {
       const userItem = this.accountManager.findItem({ key: clientUuid });
 
-      if (userItem === undefined) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
+      if (userItem === null) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
 
       const balance = await this.client.getBalance(userItem.item);
 

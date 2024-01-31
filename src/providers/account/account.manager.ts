@@ -47,22 +47,48 @@ export class AccountManager {
       }
 
       this.deleteItem(uuid);
+
+      ManagerLogger.info('[MANAGER] Account Managing Delete User Finished');
     }, interval);
 
     return uuid;
   }
 
   public setItem(key: LoginedClientKey, email: string) {
+    this.keyList.push(key);
     this.clientMap.set(key, { item: email });
+
+    ManagerLogger.debug('[MANAGER] Set Item Finished: %o', {
+      keyList: this.keyList,
+      clientMap: this.clientMap,
+    });
   }
 
-  public findItem(key: LoginedClientKey): LoginedClientItem | undefined {
+  public findItem(key: LoginedClientKey): LoginedClientItem | null {
+    const foundItem = this.keyList.find((item) => item === key);
+
+    if (foundItem === undefined) {
+      ManagerLogger.info('[MANAGER] No Key is not found froun Key List. Ignore.');
+
+      return null;
+    }
+
     const emailItem = this.clientMap.get(key);
+
+    if (emailItem === undefined) {
+      ManagerLogger.info('[MANAGER] No Item Found. Ignore.');
+
+      return null;
+    }
 
     return emailItem;
   }
 
   public deleteItem(uuid: string) {
+    const foundIndex = this.keyList.findIndex((item) => item.key === uuid);
+
+    if (foundIndex > -1) this.keyList.slice(foundIndex, 1);
+
     this.clientMap.delete({ key: uuid });
   }
 }
