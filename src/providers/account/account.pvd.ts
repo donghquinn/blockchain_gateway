@@ -10,7 +10,6 @@ import { AccountManager } from './account.manager';
 @Injectable()
 export class ClientProvider {
   // private accountManager: AccountManager;
-
   constructor(
     private readonly prisma: AccountPrismaLibrary,
     private readonly client: Web3Client,
@@ -54,7 +53,7 @@ export class ClientProvider {
 
       ClientLogger.info('[LOGIN] Login Success');
 
-      this.accountManager.setLoginUser(uuid, email);
+      this.accountManager.userLogin(uuid, email);
 
       ClientLogger.debug('[LOGIN] Set Item Finished: %o', {
         uuid,
@@ -77,7 +76,7 @@ export class ClientProvider {
 
   async createAccount(clientUuid: string) {
     try {
-      const userItem = this.accountManager.findItem(clientUuid);
+      const userItem = this.accountManager.findItem({ key: clientUuid });
 
       if (userItem === null) {
         ClientLogger.debug('[ACCOUNT] No Logined User: %o', {
@@ -115,9 +114,9 @@ export class ClientProvider {
 
   async getClientBalance(clientUuid: string) {
     try {
-      const userItem = this.accountManager.findItem(clientUuid);
+      const userItem = this.accountManager.findItem({ key: clientUuid });
 
-      if (userItem === null) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
+      if (userItem === undefined) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
 
       const balance = await this.client.getBalance(userItem.item);
 

@@ -849,6 +849,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"async-mutex@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "async-mutex@npm:0.4.1"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 3c412736c0bc4a9a2cfd948276a8caab8686aa615866a5bd20986e616f8945320acb310058a17afa1b31b8de6f634a78b7ec2217a33d7559b38f68bb85a95854
+  languageName: node
+  linkType: hard
+
 "async@npm:^3.2.3":
   version: 3.2.5
   resolution: "async@npm:3.2.5"
@@ -882,6 +891,7 @@ __metadata:
     "@types/node": "npm:^20.11.2"
     "@typescript-eslint/eslint-plugin": "npm:^6.19.0"
     "@typescript-eslint/parser": "npm:^6.19.0"
+    async-mutex: "npm:^0.4.1"
     crypto: "npm:^1.0.1"
     eslint: "npm:^8.56.0"
     eslint-config-airbnb-base: "npm:^15.0.0"
@@ -3487,7 +3497,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.6.2, tslib@npm:^2.1.0":
+"tslib@npm:2.6.2, tslib@npm:^2.1.0, tslib@npm:^2.4.0":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: e03a8a4271152c8b26604ed45535954c0a45296e32445b4b87f8a5abdb2421f40b59b4ca437c4346af0f28179780d604094eb64546bee2019d903d01c6c19bdb
