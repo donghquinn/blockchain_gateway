@@ -84,4 +84,35 @@ export class AccountPrismaLibrary extends PrismaClient {
       );
     }
   }
+
+  async selectAddress(uuid: string) {
+    try {
+      const result = await this.account.findFirst({
+        select: {
+          address: true,
+        },
+        where: {
+          clientUuid: uuid,
+        },
+      });
+
+      if (result === null) {
+        PrismaLogger.error('[ADDRESS] No Matching Data Found');
+
+        throw new PrismaError('[ADDRESS] Bring Address', 'No Matching Address Found. Please Try Again.');
+      }
+
+      return result.address;
+    } catch (error) {
+      PrismaLogger.error('[ADDRESS] Bring Address Error: %o', {
+        error,
+      });
+
+      throw new PrismaError(
+        '[ADDRESS] Bring Address',
+        'Bring Address Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
 }
