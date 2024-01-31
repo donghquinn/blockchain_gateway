@@ -131,13 +131,12 @@ export class ClientProvider {
     }
   }
 
-  async getClientBalance(clientUuid: string) {
+  async getClientBalance(clientUuid: string, address: string) {
     try {
       const userItem = this.accountManager.findItem(clientUuid);
 
       if (userItem === null) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
 
-      const address = await this.prisma.selectAddress(clientUuid);
       const balance = await this.client.getBalance(address);
 
       ClientLogger.debug('[BALANCE] Got Balance: %o', {

@@ -46,17 +46,17 @@ export const logoutRequestValidator = async (request: LogoutClientRequest) => {
 
 export const balanceRequestValidator = async (request: BalanceClientRequest) => {
   try {
-    const scheme = z.object({ uuid: z.string() });
+    const scheme = z.object({ uuid: z.string(), address: z.string() });
 
     const validated = await scheme.parseAsync(request);
 
     return validated;
   } catch (error) {
-    Logger.error('[LOGIN] Validate Login Account Error: %o', { error });
+    Logger.error('[ACCOUNT] Validate Account List Error: %o', { error });
 
     throw new ValidatorError(
-      '[ACCOUNT] Validate Login Account',
-      'Validate Login Account Error. Please Try Again.',
+      '[ACCOUNT] Validate Account List Account',
+      'Validate Account List Error. Please Try Again.',
       error instanceof Error ? error : new Error(JSON.stringify(error)),
     );
   }

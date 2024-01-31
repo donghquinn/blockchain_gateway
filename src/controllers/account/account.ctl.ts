@@ -70,9 +70,9 @@ export class ClientController {
   @Post('account/balance')
   async balanceController(@Body() request: BalanceClientRequest) {
     try {
-      const { uuid } = await balanceRequestValidator(request);
+      const { uuid, address } = await balanceRequestValidator(request);
 
-      const balance = await this.account.getClientBalance(uuid);
+      const balance = await this.account.getClientBalance(uuid, address);
 
       return setResponse(200, { balance });
     } catch (error) {
