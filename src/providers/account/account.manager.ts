@@ -51,7 +51,7 @@ export class AccountManager {
       return null;
     }
 
-    const interval = 1000 * 60 * 10;
+    const interval = 1000 * 60 * 30;
 
     const timer = setInterval(() => {
       const item = this.findItem(uuid);
