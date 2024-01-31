@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { ClientManager } from '@providers/manager/client-manager.pvd';
 import { ClientLogger } from '@utils/logger.util';
 import { Web3Client } from '@providers/ethereum/web3.pvd';
-import { AccountPrismaLibrary } from './account-prisma.pvd';
+import { AccountPrismaLibrary } from '@providers/common/account-prisma.pvd';
 
 @Injectable()
 export class AccountProvider {

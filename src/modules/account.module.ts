@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AccountPrismaLibrary } from 'providers/account/account-prisma.pvd';
+import { AccountPrismaLibrary } from '@providers/common/account-prisma.pvd';
 
 @Module({
   providers: [AccountPrismaLibrary],

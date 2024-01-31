@@ -2,13 +2,12 @@ import { ClientError } from '@errors/client.error';
 import { cryptPassword } from '@libraries/crypto/crypto.lib';
 import { comparePassword } from '@libraries/crypto/decrypt.lib';
 import { Injectable } from '@nestjs/common';
+import { AccountPrismaLibrary } from '@providers/common/account-prisma.pvd';
 import { ClientManager } from '@providers/manager/client-manager.pvd';
 import { ClientLogger } from '@utils/logger.util';
-import { AccountPrismaLibrary } from '../account/account-prisma.pvd';
 
 @Injectable()
 export class ClientProvider {
-  // private accountManager: AccountManager;
   constructor(
     private readonly prisma: AccountPrismaLibrary,
     private readonly accountManager: ClientManager,
