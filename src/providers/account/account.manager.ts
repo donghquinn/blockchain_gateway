@@ -56,7 +56,7 @@ export class AccountManager {
     const timer = setInterval(() => {
       const item = this.findItem(uuid);
 
-      if (item === undefined) {
+      if (item === null) {
         ManagerLogger.debug('[MANAGER] No User Found during 10minutes. Ignore: %o', {
           key: uuid,
           item: email,
