@@ -18,7 +18,6 @@ export interface LoginedClientKey {
 
 export interface LoginedClientItem {
   item: string;
-  address?: string;
 }
 
 export interface AccountListRequest {

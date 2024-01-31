@@ -87,6 +87,7 @@ export class ClientProvider {
     }
 
     ClientLogger.debug('[LOGOUT] Logout: %o', {
+      result,
       clientUuid,
     });
 
