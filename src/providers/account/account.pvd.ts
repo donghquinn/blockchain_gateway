@@ -158,4 +158,31 @@ export class ClientProvider {
       );
     }
   }
+
+  async getAccountList(clientUuid: string) {
+    try {
+      const userItem = this.accountManager.findItem(clientUuid);
+
+      if (userItem === null) throw new ClientError('[BALANCE] Search Key', 'No Logined User Found');
+
+      const address = await this.prisma.selectAddressList(clientUuid);
+
+      ClientLogger.debug('[BALANCE] Got Address List: %o', {
+        userItem,
+        address,
+      });
+
+      return address;
+    } catch (error) {
+      ClientLogger.error('[BALANCE] Get Address List Error: %o', {
+        error,
+      });
+
+      throw new ClientError(
+        '[BALANCE] Address List',
+        'Address List Error. Please Try Again.',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
 }
