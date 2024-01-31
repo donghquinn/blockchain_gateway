@@ -22,6 +22,7 @@
       "@libraries/*": ["libraries/*"],
       "@utils/*": ["utils/*"],
       "@validators/*": ["validators/*"],
+      "@providers/*":["providers/*"],
       "@modules/*": ["modules/*"],
       "@controllers/*": ["controllers/*"],
       "@errors/*": ["errors/*"]
