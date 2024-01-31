@@ -145,27 +145,27 @@ export class AccountManager {
   public deleteItem(uuid: string): string | null {
     const foundIndex = this.findIndexKeyFromList(uuid);
 
-    if (foundIndex > -1) {
+    if (foundIndex === -1) {
       this.keyList.slice(foundIndex, 1);
 
-      ManagerLogger.debug('[ACCOUNT] Item Deleted: %o', {
-        key: uuid,
+      ManagerLogger.debug('[MANAGER] No Item Found: %o', {
+        uuid,
         foundIndex,
         map: this.clientMap,
         keyList: this.keyList,
       });
-      // this.clientMap.delete({key: uuid});
 
-      return uuid;
+      return null;
     }
 
-    ManagerLogger.debug('[MANAGER] No Item Found: %o', {
-      uuid,
+    ManagerLogger.debug('[ACCOUNT] Item Deleted: %o', {
+      key: uuid,
       foundIndex,
       map: this.clientMap,
       keyList: this.keyList,
     });
+    // this.clientMap.delete({key: uuid});
 
-    return null;
+    return uuid;
   }
 }
