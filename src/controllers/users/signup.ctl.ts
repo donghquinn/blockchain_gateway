@@ -10,9 +10,7 @@ export const signupController = async (ctx: UserSignupRequest) => {
 
     const signupResult = await signupNewUser(email, name, password);
 
-    if (!signupResult) {
-      return setErrorResponse(ctx, '01', new Error('[SIGNUP] Signup Failed'));
-    }
+    if (!signupResult) return setErrorResponse(ctx, '01', new Error('[SIGNUP] Signup Failed'));
 
     return SetSignupResponse(ctx, '01');
   } catch (error) {
