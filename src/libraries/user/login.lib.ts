@@ -4,11 +4,10 @@ import { createToken } from '@utilities/auth.util';
 import { comparePasswords } from '@utilities/crypto.util';
 import { UserLoginInfo } from 'types/user.type';
 
+// 고객 로그인 요청
 export const userLogin = async (email: string, password: string): Promise<string | boolean> => {
   try {
     const connection = MariadbClass.getInstance();
-
-    const userInfo = await connection.query<UserLoginInfo>(getUserLoginInfoQuery, [email]);
 
     const {
       user_id: userId,
@@ -16,7 +15,7 @@ export const userLogin = async (email: string, password: string): Promise<string
       user_email: userEmail,
       user_status: userStatus,
       is_manager: isManager,
-    } = userInfo;
+    } = await connection.query<UserLoginInfo>(getUserLoginInfoQuery, [email]);
 
     const isValidPw = await comparePasswords(password, dbPassword);
 

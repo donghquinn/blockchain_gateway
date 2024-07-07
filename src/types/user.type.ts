@@ -1,10 +1,12 @@
-export interface UserSignupRequest {
+import { DefaultContext } from 'koa';
+
+export interface UserSignupRequest extends DefaultContext {
   email: string;
   name: string;
   password: string;
 }
 
-export interface UserLoginRequest {
+export interface UserLoginRequest extends DefaultContext {
   email: string;
   password: string;
 }

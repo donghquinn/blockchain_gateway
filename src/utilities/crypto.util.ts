@@ -2,6 +2,7 @@ import { createCipheriv, createDecipheriv } from 'crypto';
 import { decodeBase64 } from './encoding.util';
 import { compare, hash } from 'bcrypt';
 
+// AES 암호화
 export const encryptString = (arg: string) => {
   const secretKey = process.env.SECRET_KEY!;
   const baseIv = process.env.AES_IV!;
@@ -16,6 +17,7 @@ export const encryptString = (arg: string) => {
   return encryptedString;
 };
 
+// 패스워드 암호화
 export const encryptPassword = async (password: string): Promise<string> => {
   try {
     const encryptedPassword = await hash(password, 10);
@@ -26,10 +28,11 @@ export const encryptPassword = async (password: string): Promise<string> => {
   }
 };
 
+// AES 복호화
 export const decryptString = (arg: string) => {
   const secretKey = process.env.SECRET_KEY!;
   const baseIv = process.env.AES_IV!;
-  const iv = Buffer.from(baseIv, 'hex');
+  const iv = Buffer.from(baseIv);
 
   const encText = Buffer.from(arg, 'hex');
 
@@ -41,6 +44,7 @@ export const decryptString = (arg: string) => {
   return decryptedString;
 };
 
+// 패스워드 비교
 export const comparePasswords = async (givenPw: string, dbPw: string): Promise<boolean> => {
   try {
     const decryptedGivenPw = decryptString(givenPw);
