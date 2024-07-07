@@ -79,7 +79,7 @@ export const createTxSendTable = `
 
         INDEX tx_log_idx(network_seq, send_status)
     )
-`
+`;
 
 // 재전송 테이블
 export const createReSentTransactionTable = `

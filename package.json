@@ -25,7 +25,8 @@
     "mysql2": "^3.10.2",
     "redis": "^4.6.15",
     "ts-jest": "^29.1.5",
-    "web3": "^4.10.0"
+    "web3": "^4.10.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
