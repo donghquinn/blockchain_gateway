@@ -1,4 +1,6 @@
 import { createCipheriv, createDecipheriv } from 'crypto';
+import { decodeBase64 } from './encoding.util';
+import { compare, hash } from 'bcrypt';
 
 export const encryptString = (arg: string) => {
   const secretKey = process.env.SECRET_KEY!;
@@ -14,6 +16,16 @@ export const encryptString = (arg: string) => {
   return encryptedString;
 };
 
+export const encryptPassword = async (password: string): Promise<string> => {
+  try {
+    const encryptedPassword = await hash(password, 10);
+
+    return encryptedPassword;
+  } catch (error) {
+    throw new Error('[PASSWORD] Encrypt Password Error');
+  }
+};
+
 export const decryptString = (arg: string) => {
   const secretKey = process.env.SECRET_KEY!;
   const baseIv = process.env.AES_IV!;
@@ -27,4 +39,17 @@ export const decryptString = (arg: string) => {
   const decryptedString = Buffer.concat([decrypted, decipher.final()]).toString();
 
   return decryptedString;
+};
+
+export const comparePasswords = async (givenPw: string, dbPw: string): Promise<boolean> => {
+  try {
+    const decryptedGivenPw = decryptString(givenPw);
+    const decodedDbPw = decodeBase64(dbPw);
+
+    const isValidPw = await compare(decryptedGivenPw, decodedDbPw);
+
+    return isValidPw;
+  } catch (error) {
+    throw new Error('[COMPARE] Compare Passwords Error');
+  }
 };

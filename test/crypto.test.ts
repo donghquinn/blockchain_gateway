@@ -1,3 +1,5 @@
+import { encryptString, decryptString } from '@utilities/crypto.util';
+
 describe('Crypt and Decrypt Test', () => {
   const targetString = '김동현';
 
