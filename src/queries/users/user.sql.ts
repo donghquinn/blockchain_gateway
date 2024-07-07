@@ -7,6 +7,15 @@ export const insertUserInfoQuery = `
         password = ?
 `;
 
+export const insertNewAccountInfoQuery = `
+    INSERT INTO account_table
+    SET
+        user_id = ?,
+        network_seq = ?,
+        address = ?,
+        privatekey = ?
+`;
+
 export const getUserLoginInfoQuery = `
     SELECT *
     FROM user_table

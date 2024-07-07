@@ -30,15 +30,16 @@ export const createNeworkTable = `
 
 export const createAccountTable = `
     CREATE TABLE IF NOT EXISTS account_table (
-        account_seq     INT(20)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        account_seq     INT(20)         NOT NULL    AUTO_INCREMENT PRIMARY KEY,
         user_id         VARCHAR(50)     NOT NULL,
         network_seq     INT(20)         NOT NULL,
-        address         VARCHAR(100)    NOT NULL,
-        nonce           BIGINT          NOT NULL,
-        balance         BIGINT          NOT NULL,
-        account_status  TINYINT(2)      NOT NULL DEFAULT 50 COMMNET '50 - 활성 어카운트, 10 - 비활성 어카운트',
-        created         DATETIME        NOT NULL DEFAULT current_timestamp,
-        updated         DATETIME        NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
+        address         VARCHAR(100)    NOT NULL    UNIQUE,
+        privatekey      TEXT            NOT NULL    UNIQUE,
+        nonce           BIGINT          NOT NULL    DEFAULT 0,
+        balance         BIGINT          NOT NULL    DEFAULT 0,
+        account_status  TINYINT(2)      NOT NULL    DEFAULT 50 COMMNET '50 - 활성 어카운트, 10 - 비활성 어카운트',
+        created         DATETIME        NOT NULL    DEFAULT current_timestamp,
+        updated         DATETIME        NOT NULL    DEFAULT current_timestamp ON UPDATE current_timestamp,
 
         INDEX account_idx(account_status, network_seq, user_id)
     )
