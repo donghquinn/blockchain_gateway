@@ -16,6 +16,7 @@ export interface UserLoginInfo {
   user_email: string;
   user_name: string;
   password: string;
+  is_manager: number;
   user_status: number;
   created: Date;
   updated: Date;
