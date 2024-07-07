@@ -33,11 +33,13 @@ export class Web3Class {
     try {
       const account = this.web3.eth.accounts.create();
 
-      const encryptedPk = encryptString(account.privateKey);
+      const { privateKey, address } = account;
+
+      const encryptedPk = encryptString(privateKey);
 
       const encodedPk = encodeBase64(encryptedPk);
 
-      await this.dbConnection.query(insertNewAccountInfoQuery, [userId, networkSeq, account.address, encodedPk]);
+      await this.dbConnection.query(insertNewAccountInfoQuery, [userId, networkSeq, address, encodedPk]);
 
       return account;
     } catch (error) {
