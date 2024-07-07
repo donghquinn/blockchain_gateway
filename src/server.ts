@@ -32,7 +32,7 @@ export class StartServer {
   private registerMiddleware() {
     this.koa.use(cors);
     this.koa.use(koaHelmet);
-    this.koa.use(bodyParser);
+    this.koa.use( bodyParser );
   }
 
   public serverStart() {

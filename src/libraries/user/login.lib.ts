@@ -6,11 +6,12 @@ import { UserLoginInfo } from 'types/user.type';
 export const userLogin = async (email: string, password: string) => {
   try {
     const connection = MariadbClass.getInstance();
+
     const userInfo = await connection.query<UserLoginInfo>(getUserLoginInfoQuery, [email]);
 
     const isValidPw = await comparePasswords(password, userInfo.password);
 
-    if (!isValidPw) return isValidPw;
+    if (!isValidPw) return false;
   } catch (error) {
     throw new Error('[LOGIN] User Login Error');
   }
