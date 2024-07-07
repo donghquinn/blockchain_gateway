@@ -32,7 +32,7 @@ export const encryptPassword = async (password: string): Promise<string> => {
 export const decryptString = (arg: string) => {
   const secretKey = process.env.SECRET_KEY!;
   const baseIv = process.env.AES_IV!;
-  const iv = Buffer.from(baseIv, 'hex');
+  const iv = Buffer.from(baseIv);
 
   const encText = Buffer.from(arg, 'hex');
 
