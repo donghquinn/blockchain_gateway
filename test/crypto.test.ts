@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv } from 'crypto';
+import jwt from 'jsonwebtoken';
 
 // AES 암호화
 export const encryptString = (arg: string) => {
@@ -42,5 +43,35 @@ describe('Crypt and Decrypt Test', () => {
 
   test('Compare', () => {
     expect(decodedString).toBe(targetString);
+  });
+});
+
+describe('JWT data', () => {
+  interface JwtModel {
+    user_id: string;
+    user_email: string;
+    user_status: number;
+    is_manager: number;
+  }
+
+  const jwtData: JwtModel = {
+    user_id: '1',
+    user_email: 'ehdgus1524@gmail.com',
+    user_status: 1,
+    is_manager: 1,
+  };
+
+  const jwtKey = process.env.JWT_KEY!;
+
+  const token = jwt.sign(jwtData, jwtKey, { expiresIn: 3 * 60 * 1000 });
+
+  const decodedToken = <JwtModel>jwt.verify(token, jwtKey);
+
+  console.log(token);
+  console.log(decodedToken);
+  console.log('@@@@@@@@@');
+
+  test('JWT Verifying Test', () => {
+    expect(decodedToken.user_email).toBe(jwtData.user_email);
   });
 });
