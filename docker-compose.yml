@@ -35,7 +35,7 @@ services:
     # image: ${REGISTRY_URL}
     build:
       context: .
-      dockerfile: ./Dockerfile-deploy
+      dockerfile: ./Dockerfile
     container_name: gate
     restart: unless-stopped
     volumes:
