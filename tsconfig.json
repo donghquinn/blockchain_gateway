@@ -20,12 +20,9 @@
     "baseUrl": "src",
     "paths": {
       "@libraries/*": ["libraries/*"],
-      "@utils/*": ["utils/*"],
+      "@utilities/*": ["utilities/*"],
       "@validators/*": ["validators/*"],
-      "@providers/*":["providers/*"],
-      "@modules/*": ["modules/*"],
-      "@controllers/*": ["controllers/*"],
-      "@errors/*": ["errors/*"]
+      "@controllers/*": ["controllers/*"]
     }
   },
   "include": ["src/**/*"],
