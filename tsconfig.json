@@ -21,8 +21,12 @@
     "paths": {
       "@libraries/*": ["libraries/*"],
       "@utilities/*": ["utilities/*"],
+      "@queries/*":  ["queries/*"],
+      "@routers/*":  ["routers/*"],
+      "@assets/*":  ["assets/*"],
       "@validators/*": ["validators/*"],
-      "@controllers/*": ["controllers/*"]
+      "@controllers/*": ["controllers/*"],
+      "@dto/*": ["dto/*"]
     }
   },
   "include": ["src/**/*"],
