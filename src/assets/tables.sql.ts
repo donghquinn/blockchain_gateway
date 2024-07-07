@@ -85,7 +85,7 @@ export const createTxSendTable = `
 export const createReSentTransactionTable = `
     CREATE TABLE IF NOT EXISTS resend_transaction_table (
         resend_tx_seq       INT(20)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        transaction_seq     INT(20)         NOT NULL,
+        tx_log_seq          INT(20)         NOT NULL,
         resend_status       TINYINT(2)      NOT NULL DEFAULT 10 COMMENT '10 - 재시도, 50 - 재시도 성공',
         failed_reason       TEXT            NOT NULL            COMMENT '실패 에러 내용 혹은 응답',
         retry_count         INT(20)         NOT NULL DEFAULT 0,
