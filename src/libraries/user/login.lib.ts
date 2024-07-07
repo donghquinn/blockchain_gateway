@@ -4,6 +4,7 @@ import { createToken } from '@utilities/auth.util';
 import { comparePasswords } from '@utilities/crypto.util';
 import { UserLoginInfo } from 'types/user.type';
 
+// 고객 로그인 요청
 export const userLogin = async (email: string, password: string): Promise<string | boolean> => {
   try {
     const connection = MariadbClass.getInstance();

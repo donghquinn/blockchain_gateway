@@ -1,10 +1,10 @@
 import { MariadbClass } from '@libraries/database/mariadb.lib';
-import { getUserLoginInfoQuery, insertUserInfoQuery } from '@queries/users/user.sql';
-import { comparePasswords, decryptString, encryptPassword, encryptString } from '@utilities/crypto.util';
-import { decodeBase64, encodeBase64 } from '@utilities/encoding.util';
+import { insertUserInfoQuery } from '@queries/users/user.sql';
+import { decryptString, encryptPassword } from '@utilities/crypto.util';
+import { encodeBase64 } from '@utilities/encoding.util';
 import { randomUUID } from 'crypto';
-import { UserLoginInfo } from 'types/user.type';
 
+// 회원가입
 export const signupNewUser = async (email: string, name: string, password: string): Promise<boolean> => {
   try {
     const connection = MariadbClass.getInstance();
@@ -29,6 +29,7 @@ export const signupNewUser = async (email: string, name: string, password: strin
   }
 };
 
+// 요청 바디의 유저 정보 디코딩
 const decodeGivenUserInfo = (email: string, name: string, password: string) => {
   const decryptedEmail = decryptString(email);
   const decryptedName = decryptString(name);
