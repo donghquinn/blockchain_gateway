@@ -9,15 +9,13 @@ export const userLogin = async (email: string, password: string): Promise<string
   try {
     const connection = MariadbClass.getInstance();
 
-    const userInfo = await connection.query<UserLoginInfo>(getUserLoginInfoQuery, [email]);
-
     const {
       user_id: userId,
       password: dbPassword,
       user_email: userEmail,
       user_status: userStatus,
       is_manager: isManager,
-    } = userInfo;
+    } = await connection.query<UserLoginInfo>(getUserLoginInfoQuery, [email]);
 
     const isValidPw = await comparePasswords(password, dbPassword);
 

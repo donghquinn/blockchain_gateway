@@ -67,10 +67,6 @@ describe('JWT data', () => {
 
   const decodedToken = <JwtModel>jwt.verify(token, jwtKey);
 
-  console.log(token);
-  console.log(decodedToken);
-  console.log('@@@@@@@@@');
-
   test('JWT Verifying Test', () => {
     expect(decodedToken.user_email).toBe(jwtData.user_email);
   });

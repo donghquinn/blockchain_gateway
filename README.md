@@ -21,3 +21,5 @@
 - Create, Sign, Send transactions
 
 - Nonce Management
+
+- Resend Tx
