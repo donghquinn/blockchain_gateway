@@ -1,4 +1,4 @@
-# Blockchain Gateway
+# Blockchain Simple Gateway
 
 - It's simple gateway for validate and connecting client - blockchain network
 
