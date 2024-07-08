@@ -29,7 +29,7 @@ export class Web3Class {
     return this.instance;
   }
 
-  public async createAccount(userId: string, networkSeq: number) {
+  public async createAccount(userId: string, networkSeq: number): Promise<string> {
     try {
       const account = this.web3.eth.accounts.create();
 
@@ -41,7 +41,7 @@ export class Web3Class {
 
       await this.dbConnection.query(insertNewAccountInfoQuery, [userId, networkSeq, address, encodedPk]);
 
-      return account;
+      return account.address;
     } catch (error) {
       throw new Error('[WEB3] Create Account Error');
     }

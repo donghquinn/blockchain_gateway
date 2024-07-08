@@ -1,14 +1,18 @@
-import { DefaultContext } from 'koa';
+import { Context } from 'koa';
 
-export interface UserSignupRequest extends DefaultContext {
+export interface UserSignupRequest extends Context {
   email: string;
   name: string;
   password: string;
 }
 
-export interface UserLoginRequest extends DefaultContext {
+export interface UserLoginRequest extends Context {
   email: string;
   password: string;
+}
+
+export interface UserGetAccountInfoRequest extends Context {
+  userId: string;
 }
 
 // =======================
@@ -51,19 +55,16 @@ export interface UserInfoQueryResult {
 
 // 응답할 때 담을 어카운트 정보
 export interface UserAccountInfo {
-  // ----- User
-  user_email: string;
-  user_name: string;
-
   // ----- Network
   network_name: string;
   rpc_url: string;
 
   // ----- Account
+  address_seq: number;
+  network_seq: number;
   address: string;
   nonce: bigint;
   balance: bigint;
-  account_status: number;
   account_created: Date;
   account_updated: Date;
 }
