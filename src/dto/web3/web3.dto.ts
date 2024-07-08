@@ -1,18 +1,8 @@
-import { DefaultContext } from 'koa';
 import { DefaultResponse } from 'types/response.type';
-import { UserAccountInfo } from 'types/user.type';
 import { Web3AccountBalanceRequest, Web3AccountCreateRequest } from 'types/web3.type';
-
-interface Web3AddressResponse extends DefaultResponse {
-  address: string;
-}
 
 interface Web3BalanceRespponse extends DefaultResponse {
   balance: bigint;
-}
-
-interface Web3AccountResponse extends DefaultResponse {
-  accountInfo: UserAccountInfo;
 }
 
 interface Web3AccountCreateResponse extends DefaultResponse {
@@ -27,19 +17,6 @@ export const setBalanceResponse = (ctx: Web3AccountBalanceRequest, code: string,
     result: true,
     code: code,
     balance: balance,
-  };
-
-  ctx.body = responseBody;
-};
-
-// 어카운트 정보 응답
-export const setAccountResponse = (ctx: DefaultContext, code: string, accountInfo: UserAccountInfo) => {
-  ctx.status = 200;
-
-  const responseBody: Web3AccountResponse = {
-    result: true,
-    code: code,
-    accountInfo: accountInfo,
   };
 
   ctx.body = responseBody;

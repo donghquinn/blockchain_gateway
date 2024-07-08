@@ -15,6 +15,6 @@ export interface Web3AccountCreateRequest extends Context {
   networkSeq: number;
 }
 
-export interface Web3AccountBalanceRequest extends Context{
-    address: string;
+export interface Web3AccountBalanceRequest extends Context {
+  address: string;
 }
