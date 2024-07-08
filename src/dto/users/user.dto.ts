@@ -1,11 +1,15 @@
 import { DefaultContext } from 'koa';
 import { DefaultResponse } from 'types/response.type';
-import { UserAccountInfo, UserGetAccountInfoRequest } from 'types/user.type';
+import { UserAccountInfo, UserGetAccountInfoRequest, UserLoginRequest } from 'types/user.type';
 
 interface UserSignupResponse extends DefaultResponse {}
 
 interface UserAccountResponse extends DefaultResponse {
-  accountInfo: UserAccountInfo;
+  accountInfo: Array<UserAccountInfo>;
+}
+
+interface UserLoginResponse extends DefaultResponse {
+  token: string;
 }
 
 export const SetSignupResponse = (ctx: DefaultContext, code: string) => {
@@ -19,8 +23,24 @@ export const SetSignupResponse = (ctx: DefaultContext, code: string) => {
   ctx.body = responseBody;
 };
 
+export const setLoginResponse = (ctx: UserLoginRequest, code: string, token: string) => {
+  ctx.status = 200;
+
+  const responseBody: UserLoginResponse = {
+    result: true,
+    code: code,
+    token: token,
+  };
+
+  ctx.body = responseBody;
+};
+
 // 어카운트 정보 응답
-export const setUserAccountResponse = (ctx: UserGetAccountInfoRequest, code: string, accountInfo: UserAccountInfo) => {
+export const setUserAccountResponse = (
+  ctx: UserGetAccountInfoRequest,
+  code: string,
+  accountInfo: Array<UserAccountInfo>,
+) => {
   ctx.status = 200;
 
   const responseBody: UserAccountResponse = {

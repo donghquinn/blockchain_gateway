@@ -6,7 +6,7 @@ export const insertWeb3Network = `
 `;
 
 export const getWeb3Network = `
-    SELECT network_name, rpc_url
+    SELECT network_seq, network_name, rpc_url
     FROM network_table
     WHERE network_status = 50
 `;

@@ -1,6 +1,7 @@
 import { Context } from 'koa';
 
 export interface NetworkQueryResult {
+  network_seq: number;
   network_name: string;
   rpc_url: string;
 }
