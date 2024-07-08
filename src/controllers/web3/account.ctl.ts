@@ -4,7 +4,7 @@ import { createAccount } from '@libraries/web3/account.lib';
 import { createAccountValidator } from '@validators/web3/account.validator';
 import { Web3AccountCreateRequest } from 'types/web3.type';
 
-export const userCreateAccount = async (ctx: Web3AccountCreateRequest) => {
+export const web3CreateAccountController = async (ctx: Web3AccountCreateRequest) => {
   try {
     const { userId, networkSeq } = await createAccountValidator(ctx);
 
