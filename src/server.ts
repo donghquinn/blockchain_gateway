@@ -3,6 +3,7 @@ import koaHelmet from 'koa-helmet';
 import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
 import { Server } from 'http';
+import { userRouter } from '@routers/users';
 
 export class StartServer {
   private static instance: StartServer;
