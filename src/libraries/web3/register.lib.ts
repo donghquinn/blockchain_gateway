@@ -12,4 +12,3 @@ export const registerNetwork = async (networkName: string, rpcUrl: string): Prom
     throw new Error('[NETWORK] Register Web3 Network Error');
   }
 };
-
