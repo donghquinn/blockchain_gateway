@@ -31,6 +31,14 @@ export class RedisClass {
     this.connection = createClient(this.options);
   }
 
+  public static getInstance() {
+    if (!this.instance) {
+      this.instance = new RedisClass();
+    }
+
+    return this.instance;
+  }
+
   public async getAsync(key: string): Promise<string | null> {
     try {
       const result = await this.connection.get(key);
