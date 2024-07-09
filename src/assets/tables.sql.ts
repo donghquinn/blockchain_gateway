@@ -87,7 +87,7 @@ export const createReSentTransactionTable = `
         resend_tx_seq       INT(20)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
         tx_log_seq          INT(20)         NOT NULL,
         resend_status       TINYINT(2)      NOT NULL DEFAULT 10 COMMENT '10 - 재시도, 50 - 재시도 성공',
-        failed_reason       TEXT            NOT NULL            COMMENT '실패 에러 내용 혹은 응답',
+        failed_reason       TEXT                                COMMENT '실패 에러 내용 혹은 응답',
         retry_count         INT(20)         NOT NULL DEFAULT 0,
         created             DATETIME        NOT NULL DEFAULT current_timestamp,
         updated             DATETIME        NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
