@@ -1,11 +1,11 @@
-import Koa from 'koa';
-import koaHelmet from 'koa-helmet';
 import cors from '@koa/cors';
-import bodyParser from 'koa-bodyparser';
-import { Server } from 'http';
-import { userRouter } from '@routers/users';
-import { router } from './routers';
 import { getAllNetwork } from '@libraries/web3/get.lib';
+import { Logger } from '@utilities/logger.util';
+import { Server } from 'http';
+import Koa from 'koa';
+import bodyParser from 'koa-bodyparser';
+import koaHelmet from 'koa-helmet';
+import { router } from './routers';
 
 export class StartServer {
   private static instance: StartServer;
@@ -51,7 +51,9 @@ export class StartServer {
 
       this.registerMiddleware();
 
-      this.server = this.koa.listen(this.appPort, () => {});
+      this.server = this.koa.listen(this.appPort, () => {
+        Logger.info(`[START] Server Start Listening: ${this.appPort}`);
+      });
 
       return;
     }
