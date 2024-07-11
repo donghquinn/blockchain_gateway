@@ -5,6 +5,7 @@ import bodyParser from 'koa-bodyparser';
 import { Server } from 'http';
 import { userRouter } from '@routers/users';
 import { router } from './routers';
+import { getAllNetwork } from '@libraries/web3/get.lib';
 
 export class StartServer {
   private static instance: StartServer;
@@ -40,8 +41,14 @@ export class StartServer {
     this.koa.use(router.allowedMethods);
   }
 
+  private async settingUp() {
+    await getAllNetwork();
+  }
+
   public serverStart() {
     if (!this.server) {
+      this.settingUp();
+
       this.registerMiddleware();
 
       this.server = this.koa.listen(this.appPort, () => {});
