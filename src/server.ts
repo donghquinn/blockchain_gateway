@@ -1,9 +1,11 @@
-import Koa from 'koa';
-import koaHelmet from 'koa-helmet';
 import cors from '@koa/cors';
-import bodyParser from 'koa-bodyparser';
+import { getAllNetwork } from '@libraries/web3/get.lib';
+import { Logger } from '@utilities/logger.util';
 import { Server } from 'http';
-import { userRouter } from '@routers/users';
+import Koa from 'koa';
+import bodyParser from 'koa-bodyparser';
+import koaHelmet from 'koa-helmet';
+import { router } from './routers';
 
 export class StartServer {
   private static instance: StartServer;
@@ -34,13 +36,24 @@ export class StartServer {
     this.koa.use(cors);
     this.koa.use(koaHelmet);
     this.koa.use(bodyParser);
+
+    this.koa.use(router.routes);
+    this.koa.use(router.allowedMethods);
+  }
+
+  private async settingUp() {
+    await getAllNetwork();
   }
 
   public serverStart() {
     if (!this.server) {
+      this.settingUp();
+
       this.registerMiddleware();
 
-      this.server = this.koa.listen(this.appPort, () => {});
+      this.server = this.koa.listen(this.appPort, () => {
+        Logger.info(`[START] Server Start Listening: ${this.appPort}`);
+      });
 
       return;
     }
