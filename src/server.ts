@@ -4,6 +4,7 @@ import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
 import { Server } from 'http';
 import { userRouter } from '@routers/users';
+import { router } from './routers';
 
 export class StartServer {
   private static instance: StartServer;
@@ -34,6 +35,9 @@ export class StartServer {
     this.koa.use(cors);
     this.koa.use(koaHelmet);
     this.koa.use(bodyParser);
+
+    this.koa.use(router.routes);
+    this.koa.use(router.allowedMethods);
   }
 
   public serverStart() {
