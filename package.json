@@ -2,7 +2,7 @@
   "name": "blockchain_gateway",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.ts",
   "type": "module",
   "scripts": {
     "test": "NODE_OPTIONS=\"--experimental-vm-modules --no-warnings\" pnpm jest -c jest.config.ts --runInBand --detectOpenHandles",
@@ -11,7 +11,7 @@
     "start": "NODE_ENV=production node --max-old-space-size=700 -r ts-node/register --loader ts-paths-esm-loader --experimental-specifier-resolution=node --env-file=.env ./src/main.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "donghquinn",
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^5.0.0",
