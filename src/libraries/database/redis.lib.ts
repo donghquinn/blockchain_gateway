@@ -1,3 +1,4 @@
+import { RedisError } from 'errors/redis.error';
 import {
   createClient,
   RedisClientOptions,
@@ -39,13 +40,26 @@ export class RedisClass {
     return this.instance;
   }
 
+  // 초기화
+  public async clear() {
+    try {
+      await this.connection.flushAll();
+    } catch (error) {
+      throw new RedisError(
+        'Clear All Network Data',
+        'Clear All Network Data Error',
+        error instanceof Error ? error : new Error(JSON.stringify(error)),
+      );
+    }
+  }
+
   public async getAsync(key: string): Promise<string | null> {
     try {
       const result = await this.connection.get(key);
 
       return result;
     } catch (error) {
-      throw new Error('[REDIS] Get Values Error');
+      throw new RedisError('GET', 'Get Async', error instanceof Error ? error : new Error(JSON.stringify(error)));
     }
   }
 
@@ -53,7 +67,7 @@ export class RedisClass {
     try {
       await this.connection.set(key, values);
     } catch (error) {
-      throw new Error('[REDIS] Set Values Error');
+      throw new RedisError('SET', 'Set Async', error instanceof Error ? error : new Error(JSON.stringify(error)));
     }
   }
 }
