@@ -1,9 +1,7 @@
-import { MariadbClass } from '@libraries/database/mariadb.lib';
 import { StartServer } from 'server';
+import { setup } from 'setup';
 
-const mysql = MariadbClass.getInstance();
-
-mysql.createTable();
+await setup();
 
 const server = StartServer.getInstance();
 
