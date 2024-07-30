@@ -95,3 +95,12 @@ export const createReSentTransactionTable = `
         INDEX resend_tx_idx(transaction_seq, resend_status)
     )
 `;
+
+export const createTableTransaction = [
+  createUserTable,
+  createNeworkTable,
+  createAccountTable,
+  createTransactionTable,
+  createTxSendTable,
+  createReSentTransactionTable,
+];
